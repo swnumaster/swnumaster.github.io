@@ -21,7 +21,6 @@ function calcMouseArea(baseX, baseY, mouseX, mouseY) {
 
 function runSprite(obj, label, loop = true, time = .2, labelNext = "", loopNext = true, timeNext = 1.5) {
     if (!time) time = 1;
-    zog(label, time);
     obj.run({label: label, loop: loop, time: time, call: () => {
         if (labelNext) {
             obj.run({label: labelNext, loop: loopNext, time: timeNext});

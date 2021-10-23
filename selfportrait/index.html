@@ -16,7 +16,6 @@
 // ==========================================================================
 // This App is created by Jiangyingbing(Nathan)
 // for an IMM Assignment of Sheridan College
-// Version: 2.0
 // ==========================================================================
 const assets = [
     "head.png",
@@ -48,6 +47,7 @@ const assets = [
 ];
 const assetPath = "assets/";
 const config = {
+    version: "V2.1",
     devEnable: false,
     parallaxEnable: true,
     landscape: {width: 927, height: 384},
@@ -85,13 +85,13 @@ const config = {
             ],
             handPoints: [121, 231],
         },
-        personInitialTimeout: 2,    // first timeout to generate a person
-        personTimeoutMulitple: 1.5,   // next timeout: personInitialTimeout * personTimeoutMulitple
+        personInitialTimeout: 3,    // first timeout to generate a person
+        personTimeoutMulitple: 1,   // next timeout: personInitialTimeout * personTimeoutMulitple
     },
     person: {
         scaleMin: .6,
         scaleMax: 1.2,
-        alpha: 0.9,
+        alpha: 1,
         moveStep: 10,
         skeletonPoints: [
             {
@@ -114,8 +114,9 @@ const config = {
             "ZimJS", "Linux", "Javascript", "Python", "Typescript", "C/C++", "React",
             "MySQL", "HTML", "CSS", "PHP", "Java", "Object-C", "Swift", "JQuery",
             "Webpack", "Docker", "npm/yarn", "Apache", "Nginx", "Flask",
-            "Premiere", "Illustrator", "Fireworks", "Agile", "PostgreSQL"
-        ]
+            "Premiere", "Illustrator", "Fireworks", "Agile", "PostgreSQL",
+            "Nathan"    // the last one is just for upgraded person
+        ],
     },
     albums: {
         jobs: ["job1.jpg", "job2.jpg", "job3.jpg"],
@@ -285,7 +286,6 @@ class Logo extends Base {
         }
         this.m_holder.sca(scale);
     }
-
     remove() {this.m_holder.dispose(); }
 }
 
@@ -353,9 +353,9 @@ class Computer extends Base {
         super();
         this.m_parent = parent;
         this.m_holder = new Container(config.workDesk.computerWidth + config.workDesk.computerEdgeWidth, config.workDesk.computerHeight + config.workDesk.computerEdgeWidth)
-            .centerReg()
+            .centerReg(parent.getHolder())
             .nam("Computer")
-            .loc(locX, locY, parent.getHolder());
+            .loc(locX, locY);
         this.initComputer();
         this.m_circles = new Container(this.m_holder.width - config.workDesk.computerEdgeWidth, this.m_holder.height  - config.workDesk.computerEdgeWidth)
             .centerReg(this.m_holder);
@@ -517,7 +517,7 @@ class LandscapeMgr extends Base {
         });
         // mar moving
         const starMarHolder = new Container()
-            .centerReg(this.m_holder)
+            .addTo(this.m_holder)
             .loc(stage.width + 1000, stage.height / 2);
         const starMar = frame.asset("star_mar.png").centerReg(starMarHolder);
         starMarHolder.animate({
@@ -688,7 +688,7 @@ class WorkDeskMgr extends Base {
     addPerson() {
         if (this.m_canAdd) {
             this.m_computer.hide();
-            this.m_personMgr.add();    // add a person
+            this.m_personMgr.add();   // add a person
             this.m_canAdd = false;
             timeout(1, () => {
                 this.m_computer.show();
@@ -729,35 +729,47 @@ class PersonMgr extends Base {
     constructor(stage) {
         super();
         this.m_stage = stage;
-        this.m_holder = new Container(stage.width, stage.height)
-                            .nam("PersonMgr")
-                            .centerReg()
-                            .pos(0, 0, CENTER, CENTER);
-        // default
-        this.changeAction();
+        this.m_holder = new Container(stage.width, stage.height).nam("PersonMgr").centerReg(stage);
+        this.m_upgradeTimes = 0;
     }
 
     add() {
+        if (this.m_skillIndex != undefined && this.m_skillIndex >= config.person.skills.length - 2) {
+            // if skills are all displayed
+            this.m_skillIndex = config.person.skills.length - 1;
+            this.removeAllPersons();
+            this.addPerson(true);
+            this.m_skillIndex = undefined;
+        } else {
+            // if skills are not all displayed
+            this.m_skillIndex = getIndex(this.m_skillIndex, config.person.skills.length);
+            this.addPerson(config.devEnable);
+        }
+    }
+
+    addPerson(isUpgraded) {
         // body container
-        const person = new Container()
-                            .addTo(this.m_holder)
-                            .pos(360, -150, CENTER, CENTER)
-                            .nam("person")
-                            //.alp(0)
-                            .sca(.1);
+        const person = new Container().addTo(this.m_holder).nam("person")
+            .alp(0)
+            .sca(.1)
+            .drag({onTop: false, currentTarget: true}); // or {all: true}
+
+        // add all parts into the person
         this.addHead(person);
         this.addSkeleton(person);
         this.addSkill(person);
 
+        // display the person by animation
         var destX, destY, destScale;
-        if (config.devEnable) {
-            person.drag({onTop: false});
+        if (isUpgraded) {   // upgraded person
+            person.pos(0, 0, CENTER, CENTER);
             // dest points
-            destScale = 1;
+            destScale = 1.3 + (this.m_upgradeTimes / 5);
             destX = this.m_stage.width / 2;
             destY = this.m_stage.height / 2;
-        } else {
-            person.drag({onTop: false, currentTarget: true}); // or {all: true}
+            this.m_upgradeTimes ++;
+        } else {    // common person
+            person.pos(360, -150, CENTER, CENTER);
             // dest points
             destScale = rand(config.person.scaleMin, config.person.scaleMax);
             const realWidth = person.width / person.scale;
@@ -765,12 +777,9 @@ class PersonMgr extends Base {
             destX = rand(realWidth / 2, this.m_holder.width - realWidth / 2);
             destY = rand(realHeight / 2, this.m_holder.height - realHeight / 2);
         }
-        // play sound
-        Music.getInstance().playVictory();
-        // show person by animation
         person.animate({
             props: {
-                //alpha: config.person.alpha,
+                alpha: config.person.alpha,
                 scale: destScale,
                 x: destX,
                 y: destY
@@ -781,12 +790,73 @@ class PersonMgr extends Base {
                 }
             }
         });
+
+        // play sound
+        Music.getInstance().playVictory();
     }
 
     // head
     addHead(person) {
         const head = new Sprite({json:asset("head.json")}).nam("head").addTo(person);
         head.run({loop: true, label: "tongue", time: 1.5});
+    }
+
+    // skeleton
+    addSkeleton(person) {
+        const skeleton = new Container().nam("skeleton").addTo(person);
+        const squiggle = new Squiggle({
+            thickness: 10,
+            color: red,
+            interactive: false
+            })
+            .nam("squiggle")
+            .centerReg(skeleton)
+            .sca(.6)
+            .pos(0, 50, CENTER, CENTER);
+        this.changeSkeleton(0);
+        // add a Ticker
+        if (this.m_tickers == undefined) this.m_tickers = [];
+        this.m_tickers.push(Ticker.add(() => {
+            squiggle.update();
+        }));
+    }
+
+    // skill
+    addSkill(person) {
+        const skill = new Label({
+            text: config.person.skills[this.m_skillIndex],
+            size: 12,
+            color: white,
+            backgroundColor: config.commBgColor,
+            lineHeight: 16,
+            padding: 4
+        })
+            .nam("skill")
+            .centerReg(person)
+            .pos(30, 124, CENTER, CENTER);
+    }
+
+    // remove all persons
+    removeAllPersons() {
+        this.m_holder.loop(person => {
+            if (person.name == "person") {
+                person.animate({
+                    props: {
+                        x: this.m_stage.width / 2,
+                        y: this.m_stage.height / 2,
+                        alpha: 0
+                    },
+                    call: () => {
+                        person.dispose();
+                    }
+                });
+            }
+        });
+        // remove all tickers
+        loop(this.m_tickers, ticker => {
+            Ticker.remove(ticker);
+        });
+        this.m_tickers = [];
     }
 
     changeHeadForward() {
@@ -806,39 +876,6 @@ class PersonMgr extends Base {
                 runSprite(head, this.m_area + "_back", false, .1, "talk");
             }
         });
-    }
-
-    // skeleton
-    addSkeleton(person) {
-        const skeleton = new Container().nam("skeleton").addTo(person);
-        const squiggle = new Squiggle({
-            thickness: 10,
-            color: red,
-            interactive: false
-            })
-            .nam("squiggle")
-            .centerReg(skeleton)
-            .sca(.6)
-            .pos(0, 50, CENTER, CENTER);
-        this.changeSkeleton(0);
-    }
-
-    // skill
-    addSkill(person) {
-        this.m_skillIndex = getIndex(this.m_skillIndex, config.person.skills.length);
-        const skill = new Label({
-            text: config.person.skills[this.m_skillIndex],
-            size: 12,
-            color: white,
-            backgroundColor: config.commBgColor,
-            lineHeight: 16,
-            padding: 4,
-            borderColor: white,
-            borderWidth: 4,
-        })
-            .nam("skill")
-            .centerReg(person)
-            .pos(30, 124, CENTER, CENTER);
     }
 
     changeSkeleton(index) {
@@ -861,9 +898,6 @@ class PersonMgr extends Base {
         loop(hands, index => {
             const point = squiggle.pointControls[index];
             point.wiggle("y", point.y, 4, 15, .5, 1);
-        });
-        Ticker.add(() => {
-            squiggle.update();
         });
     }
 
@@ -964,6 +998,13 @@ class UIMgr extends Base {
     }
 
     init() {
+        // version
+        new Label({
+            text: config.version,
+            size: 20,
+            color: white
+        }).pos(8, 8, RIGHT, TOP, this.m_stage);
+
         // controls for development
         if (config.devEnable) {
             const btnSkeleton = new Button(200, 40, "Skeleton", red, grey).pos(10, 10, RIGHT, BOTTOM);
@@ -991,7 +1032,7 @@ class UIMgr extends Base {
                 });
 
         // control for switch music off or on
-        const btnMusicSwitch = new ImageButton("icon_music_on.png", this.m_stage.width - 50, 50, .2, this.m_holder)
+        const btnMusicSwitch = new ImageButton("icon_music_on.png", this.m_stage.width - 80, 50, .2, this.m_holder)
                 .setClickHandler((btn) => {
                     if (Music.getInstance().switchStatus()) {
                         btn.changeImage("icon_music_on.png");
@@ -1000,7 +1041,7 @@ class UIMgr extends Base {
                     }
                 });
 
-        new ImageButton("icon_howtoplay.png", this.m_stage.width - 120, 50, .2, this.m_holder)
+        new ImageButton("icon_howtoplay.png", this.m_stage.width - 150, 50, .2, this.m_holder)
                 .setClickHandler((btn) => {
                     zgo(config.howToPlay, "_blank");
                 });
@@ -1109,6 +1150,7 @@ frame.on("ready", () => {
         borderColor: white,
         borderWidth: 3,
     });
+
     // load assets
     frame.loadAssets(assets, assetPath, progressBar);
     frame.on("complete", () => {
