@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>NATHAN PORTRAIT LAB - SHERIDAN IMM</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/favicon.ico" />
+<meta name="description" content="NATHAN PORTRAIT LAB - SHERIDAN IMM">
+<meta name="keywords" content="">
+<link rel="author" content="JiangYingbing (Nathan)" href="https://blog.chueasy.com" />
+
+<!-- zimjs.com - JavaScript Canvas Framework -->
+<script src="https://zimjs.org/cdn/nft/00/zim.js"></script>
+<script src="utils.js"></script>
+
+<script>
+// ==========================================================================
+// This App is created by Jiangyingbing(Nathan)
+// for an IMM Assignment of Sheridan College
+// Version: 2.0
+// ==========================================================================
+const assets = [
+    "head.png",
+    "head.json",
+    "landscape.jpg",
+    "room.png",
+    "keyboard.png",
+    "spacekey.png",
+    "icon_tongue.png",
+    "icon_body.png",
+    "icon_view.png",
+    "icon_snapshot.png",
+    "icon_photo.png",
+    "star_mar.png",
+    "sheridan_logo.png",
+    "button.mp3",
+    "victory.mp3",
+    //"bgm.mp3",
+    "icon_music_on.png",
+    "icon_music_off.png",
+    "icon_howtoplay.png",
+    "job1.jpg",
+    "job2.jpg",
+    "job3.jpg",
+    "icon_hobby.png",
+    "hobby1.jpg",
+    "hobby2.jpg",
+    "hobby3.jpg",
+];
+const assetPath = "assets/";
+const config = {
+    devEnable: false,
+    parallaxEnable: true,
+    landscape: {width: 927, height: 384},
+    studioRoom: {width: 1200, height: 600},
+    commBgColor: purple.darken(.3),
+    workDesk: {
+        width: 756,
+        height: 380,
+        topHeight: 146,
+        topDepth: 30,
+        topColor: "#b7d0d5", // "#C6855A"
+        topEdgeColor: "#256f81", // "#93512f"
+        bodyHeight: 160,
+        bodyColor: "#5c93a1",
+        drawerBodyWidth: 200,
+        drawerWidth: 160,
+        drawerHeight: 40,
+        drawerColor: "#256f81",
+        legWidth: 30,
+        underColor: "#16434e",
+        computerBaseSize: 100,
+        computerWidth: 300,
+        computerHeight: 160,
+        computerEdgeWidth: 6,
+        computerEdgeColor: "#dbdbea",
+        computerScreenColor: purple.darken(.3),
+        computer: {
+            circleCount: 30,
+            circleRadius: 12,
+            cirleColors: [red, blue, green, orange, yellow],
+            guidePoints: [
+                [112,47],[87,37],[61,40],[42,57],[34,82],[39,109],[59,130],[86,137],[110,126],[122,101],
+                [100,86],[74,89],[178,39],[204,34],[230,40],[244,65],[246,93],[231,115],[204,123],[179,111],
+                [163,89],[162,61],[162,130],[147,137],[134,144],[121,154],[113,164],[112,177],[114,192],[117,204],
+            ],
+            handPoints: [121, 231],
+        },
+        personInitialTimeout: 2,    // first timeout to generate a person
+        personTimeoutMulitple: 1.5,   // next timeout: personInitialTimeout * personTimeoutMulitple
+    },
+    person: {
+        scaleMin: .6,
+        scaleMax: 1.2,
+        alpha: 0.9,
+        moveStep: 10,
+        skeletonPoints: [
+            {
+                points: [[-62.2,180.5,0,0,-30,0,30,0],[81.1,100.2,0,0,-30,0,30,0],[148,278,0,0,55.4,1.2,-55.4,-1.2],[218.9,102.7,0,0,-30,0,30,0],[353.7,187.8,0,0,-30,0,30,0]],
+                hands: [0,4],
+                colors: [red, blue, green]
+            },
+            {
+                points: [[-62.2,180.5,0,0,-30,0,30,0],[82.3,119.4,0,0,-30,0,30,0],[14.5,364.4,0,0,2.8,-4,-2.8,4],[161.8,257.8,0,0,-65.6,89.7,34,-46.5],[214.1,111.1,0,0,-10.3,0,30,0],[265.9,250.3,0,0,-30,0,30,0]],
+                hands: [0, 1, 2, 4, 5],
+                colors: [red, blue, green]
+            },
+            {
+                points: [[42.3,211.5,0,0,-30,0,15,0],[16.5,154.4,0,0,-31.9,13,31.8,-13],[117.1,133.6,0,0,-15,0,30,0],[35.1,378.6,0,0,2.8,-4,-2.1,3],[135.2,252.2,0,0,-51.3,43.5,17.1,-14.5],[183.7,362.3,0,0,-9.5,54.2,9.5,-54.2],[194.7,125.3,0,0,-10.3,0,15.9,0],[232.1,193.3,0,0,-10.9,-33,9.7,29.3],[308.5,166.4,0,0,-14.1,0,30,0]],
+                hands: [0,7],
+                colors: [red, blue, green]
+            },
+        ],
+        skills: [
+            "ZimJS", "Linux", "Javascript", "Python", "Typescript", "C/C++", "React",
+            "MySQL", "HTML", "CSS", "PHP", "Java", "Object-C", "Swift", "JQuery",
+            "Webpack", "Docker", "npm/yarn", "Apache", "Nginx", "Flask",
+            "Premiere", "Illustrator", "Fireworks", "Agile", "PostgreSQL"
+        ]
+    },
+    albums: {
+        jobs: ["job1.jpg", "job2.jpg", "job3.jpg"],
+        hobbies: ["hobby1.jpg", "hobby2.jpg", "hobby3.jpg"]
+    },
+    keyCodes: {
+        space: 32
+    },
+    howToPlay: "howtoplay.html"
+};
+
+// music - skeleton pattern
+class Music {
+    constructor() {
+        this.m_instance = null;
+        this.m_switchOn = true;
+    }
+    static getInstance() {
+        if (!this.m_instance) {
+            this.m_instance = new Music();
+        }
+        return this.m_instance;
+    }
+    pressButton() {
+        if (this.m_switchOn) {
+            frame.asset("button.mp3").play();
+        }
+    }
+    playVictory() {
+        if (this.m_switchOn) {
+            frame.asset("victory.mp3").play();
+        }
+    }
+    playBGM() {
+        if (this.m_switchOn) {
+            //this.m_bgMusic = frame.asset("bgm.mp3").play({loop: true, volume: .1});
+        }
+    }
+    switchStatus() {
+        this.m_switchOn = !this.m_switchOn;
+        if (this.m_switchOn) {
+            this.playBGM();
+        } else {
+            if (this.m_bgMusic) {
+                this.m_bgMusic.stop();
+            }
+        }
+        return this.m_switchOn;
+    }
+}
+
+// abstract common properties and behaviors into the base class
+class Base {
+    constructor() {
+    }
+    getHolder() {
+        return this.m_holder;
+    }
+    showOutline() {
+        this.m_holder.outline();
+    }
+    show() {
+        this.m_holder.alp(1);
+    }
+    hide() {
+        this.m_holder.alp(0);
+    }
+}
+
+// Use ImageButton class to create image button easily
+class ImageButton extends Base {
+    constructor(imgName, locX, locY, scale, parent, bgColor = "", circleBg = true) {
+        super();
+        this.m_holder = new Container().addTo(parent)
+            .nam("ImageButton")
+            .cur()
+            .loc(locX, locY, parent)
+            .alp(0);
+        this.m_scale = scale;
+        this.m_button = frame.asset(imgName).clone()
+            .centerReg(this.m_holder)
+            .sca(scale)
+            .cur()
+            .sha(black, 0, 1, 1);
+        if (bgColor) {
+            if (circleBg) {
+                new Circle(this.m_button.width / 2, bgColor, white, 6)
+                    .centerReg(this.m_holder)
+                    .sha(black, 0, 2, 4)
+                    .bot();
+            } else {
+                new Rectangle(this.m_button.width, this.m_button.height, bgColor, white, 6)
+                    .centerReg(this.m_holder)
+                    .sha(black, 0, 2, 4)
+                    .bot();
+            }
+        } else {    // create a transparent element for responding events
+            new Rectangle(this.m_button.width + 10, this.m_button.height + 10, white)
+                .centerReg(this.m_holder)
+                .alp(0.01)  // cannot set alpha=0, or cannot respond events
+                .bot();
+        }
+        this.m_holder.tap(() => {
+            this.showEffect();
+            Music.getInstance().pressButton();
+            if (this.m_handler) this.m_handler(this);
+        });
+        this.m_holder.animate({
+            props: {alpha: 1},
+            time: .2
+        })
+        return this;
+    }
+
+    changeImage(imgName) {
+        this.m_button.dispose();
+        this.m_button = frame.asset(imgName).clone()
+            .centerReg(this.m_holder)
+            .sca(this.m_scale)
+            .cur()
+            .sha(black, 0, 1, 1);
+    }
+
+    showEffect() {
+        this.m_button.animate({
+            props: {y: this.m_button.y + 1, alpha: .5},
+            time: .05,
+            call: () => {
+                this.m_button.animate({
+                    props: {y: this.m_button.y-1, alpha: 1},
+                    time: .05,
+                });
+            }
+        });
+    }
+
+    setClickHandler(handler) {
+        this.m_handler = handler;
+    }
+}
+
+// Use Logo class to create logos easily
+class Logo extends Base {
+    constructor(locX, locY, scale, parent, withHandler = false) {
+        super();
+        this.m_holder = new Container()
+            .nam("Logo")
+            .loc(locX, locY, parent);
+        new Rectangle(540, 60, config.commBgColor, white, 6)
+            .centerReg(this.m_holder);
+        new LabelLetters("<font color=white>NATHAN PORTRAIT LAB</font>", CENTER, CENTER, 4)
+            .centerReg(this.m_holder).pos(0, 3, CENTER, CENTER)
+            .animate({
+                props: {alpha: .5},
+                wait: .1,
+                time: 2,
+                sequence: .05,
+                rewind: true,
+                loop: true,
+                loopWait: 2
+            });
+        if (withHandler) {
+            new Rectangle(600, 80, null, white, 10, 10)
+                .centerReg(this.m_holder)
+                .pos(0, -40, CENTER, CENTER)
+                .bot();
+        }
+        this.m_holder.sca(scale);
+    }
+
+    remove() {this.m_holder.dispose(); }
+}
+
+// Use Album class to create ablums easily
+class Album extends Base {
+    constructor(imgList, locX, locY, scale, parent) {
+        super();
+        this.m_parent = parent;
+        this.m_holder = new Container().addTo(parent)
+            .nam("Album")
+            .alp(0)
+            .loc(locX, locY, parent);
+        // background as a mask
+        new Rectangle(parent.width, parent.height, black)
+            .centerReg(this.m_holder)
+            .alp(.95);
+        let photos = [];
+        loop(imgList, img => {
+            let photoFrame = new Container();
+            frame.asset(img).centerReg(photoFrame);
+            photos.push(photoFrame);
+        });
+        new Tile({
+            obj: photos,
+            unique: true,
+            cols: 3,
+            rows: 1,
+            spacingH: 40,
+            spacingV: 40,
+            valign: "center"
+        }).centerReg(this.m_holder);
+
+        // cancel button
+        new Button({
+            label: "RETURN",
+            corner: 0,
+            backgroundColor: config.commBgColor,
+            borderColor: white,
+            borderWidth: 6,
+            width: 300
+        }).centerReg(this.m_holder)
+            .pos(0, 50, CENTER, BOTTOM)
+            .tap(() => {
+                this.hide();
+            });
+        this.show();
+    }
+
+    hide() {
+        this.m_holder.removeFrom();
+        this.m_holder.alp(0);
+    }
+
+    show() {
+        this.m_holder.addTo(this.m_parent);
+        this.m_holder.animate({
+            props: {alpha: 1}
+        });
+    }
+}
+
+// Use Computer class to create computers easily
+class Computer extends Base {
+    constructor(locX, locY, parent) {
+        super();
+        this.m_parent = parent;
+        this.m_holder = new Container(config.workDesk.computerWidth + config.workDesk.computerEdgeWidth, config.workDesk.computerHeight + config.workDesk.computerEdgeWidth)
+            .centerReg()
+            .nam("Computer")
+            .loc(locX, locY, parent.getHolder());
+        this.initComputer();
+        this.m_circles = new Container(this.m_holder.width - config.workDesk.computerEdgeWidth, this.m_holder.height  - config.workDesk.computerEdgeWidth)
+            .centerReg(this.m_holder);
+        this.m_tickers = [];
+        this.initCircles();
+        this.initHand();
+        this.show();
+    }
+
+    initComputer() {
+        this.m_screen = new Rectangle(config.workDesk.computerWidth, config.workDesk.computerHeight, config.workDesk.computerScreenColor, config.workDesk.computerEdgeColor, config.workDesk.computerEdgeWidth)
+            .centerReg(this.m_holder)
+            .sha(black, 0, 1, 3);
+    }
+
+    initCircles() {
+        loop(config.workDesk.computer.circleCount, () => {
+            new Circle(config.workDesk.computer.circleRadius, config.workDesk.computer.cirleColors)
+                    .addTo(this.m_circles)
+                    //.sha(black.toAlpha(.3), 2, 3, 3);
+        });
+    }
+
+    initHand() {
+        this.m_hand = new Shape().addTo(this.m_holder);
+        this.m_hand.graphics.f(red).s().p("Ag/DIQgHAAgGgFIhohWQgKgJAEgNIACgHIABgCQAGgPAPgHQAPgGAQAGIA8AYIAAjvQAAgRAMgLQAMgMAQAAQARAAAMAMQALALAAARIAAB4ICQAQQAPACAKALQAKAKABAQIAACQQAAARgMAMQgMALgQAAg");
+        const lastIndex = config.workDesk.computer.guidePoints.length - 1;
+        this.m_hand.reg(5, 0)
+            .loc(config.workDesk.computer.handPoints[0], config.workDesk.computer.handPoints[1])
+            .rot(180)
+            .noMouse();
+    }
+
+    startShaken() {
+        this.m_holder.wiggle("y", this.m_holder.y, 1, 2, .1, .2);
+    }
+
+    stopSkaken() {
+        this.m_holder.pauseAnimate();
+    }
+
+    startMoving() {
+        const width = this.m_circles.width;
+        const height = this.m_circles.height;
+        this.m_circles.loop((circle, i) => {
+            var radius = circle.radius;
+            var speed = 3;
+            var angle = rand(360);
+            var pos = {x:rand(radius, width - radius), y: rand(radius, height - radius)}
+            circle.loc(pos, null, this.m_circles).alp(.9).sca(radius/circle.radius);
+            var dampX = new Damp(pos.x, .02);
+            var dampY = new Damp(pos.y, .02);
+            this.m_tickers[i] = Ticker.add(() => {
+                var newX = pos.x + speed * Math.cos(angle * RAD);
+                var newY = pos.y + speed * Math.sin(angle * RAD);
+                if (newY < radius || newY > height - radius) {
+                    angle = -angle+rand(-5,5);
+                } else if (newX > width - radius || newX < radius) {
+                    angle = 180 - angle + rand(-5,5);
+                } else {
+                    circle.loc(dampX.convert(newX), dampY.convert(newY));
+                    pos.x = newX;
+                    pos.y = newY;
+                }
+            });
+        });
+    }
+
+    stopMoving() {
+        loop(this.m_tickers, ticker => {
+            Ticker.remove(ticker);
+        });
+    }
+
+    showHand() {
+        this.m_hand.alp(1);
+        this.m_parent.showGuide();
+    }
+
+    hideHand() {
+        this.m_hand.alp(0);
+    }
+
+    show() {
+        this.m_status = 1;
+        this.startMoving();
+        this.stopSkaken();
+        this.hideHand();
+    }
+
+    guide() {
+        this.m_status = 2;
+        this.stopMoving();
+        this.startShaken();
+        this.m_circles.loop((circle, i) => {
+            circle.animate({
+                props: {
+                    x: config.workDesk.computer.guidePoints[i][0],
+                    y: config.workDesk.computer.guidePoints[i][1]
+                },
+                call: () => {
+                    this.showHand();
+                }
+            });
+        });
+    }
+    hide() {
+        this.m_status = 3;
+        this.stopMoving();
+        this.m_circles.loop((circle, i) => {
+            let destX = rand(0, 1) == 0 ? (- circle.x * 20) : (circle.x * 20);
+            let destY = rand(0, 1) == 0 ? (- circle.y * 20) : (circle.y * 20);
+            destX += rand(0, 1000);
+            destY += rand(0, 1000);
+            circle.animate({
+                props: {x: destX, y: destY, alpha: 0, scale: 10}
+            });
+        });
+        this.hideHand();
+    }
+
+    switchStatus() {
+        if (this.m_status == 1) this.guide();
+        else this.show();
+    }
+
+    showPhoto(bitmap) {
+        const scaleX = (this.m_screen.width - config.workDesk.computerEdgeWidth - 2) / bitmap.width;
+        const scaleY = (this.m_screen.height - config.workDesk.computerEdgeWidth - 2) / bitmap.height;
+        bitmap.sca(scaleX, scaleY).centerReg(this.m_screen);
+    }
+
+    placeCircles() {
+        this.stopMoving();
+        this.m_circles.loop(circle => {
+            circle.place();
+        });
+    }
+}
+
+// Use LandscapeMgr class to manage landscape easily
+class LandscapeMgr extends Base {
+    constructor(stage) {
+        super();
+        this.m_stage = stage;
+        this.m_holder = new Container(stage.width, stage.height).nam("LandscapeMgr");
+        this.m_holder.centerReg()
+            .sca(1.5)
+            .bot();
+        const milkway = frame.asset("landscape.jpg").centerReg(this.m_holder);
+        milkway.animate({
+            props: {
+                alpha: .2,
+                scale: 1.2
+            },
+            loop: true,
+            rewind: true,
+            time: 10
+        });
+        // mar moving
+        const starMarHolder = new Container()
+            .centerReg(this.m_holder)
+            .loc(stage.width + 1000, stage.height / 2);
+        const starMar = frame.asset("star_mar.png").centerReg(starMarHolder);
+        starMarHolder.animate({
+            props: {x: - starMar.width},
+            loop: true,
+            time: 30,
+            ease: "linear"
+        });
+        starMar.animate({
+            props: {scale: 2},
+            loop: true,
+            time: 15,
+            ease: "linear",
+            rewind: true
+        });
+    }
+}
+
+// Use StudioRommMgr class to manage Studio Room easily
+class StudioRoomMgr extends Base {
+    constructor(stage) {
+        super();
+        this.m_stage = stage;
+        this.m_holder = new Container(config.studioRoom.width, config.studioRoom.height).nam("StudioRoomMgr");
+        // room
+        this.m_room = new Container(config.studioRoom.width, config.studioRoom.height).nam("Room").centerReg(this.m_holder).alp(0);
+        frame.asset("room.png").centerReg(this.m_room);
+        new ImageButton("job3.jpg", 289, 100, 0.2, this.m_room, grey, false)
+            .setClickHandler((btn) => {
+                this.m_uiMgr.showJobAlbum();
+            });
+        new ImageButton("icon_hobby.png", 260, 360, 0.5, this.m_room)
+            .setClickHandler((btn) => {
+                this.m_uiMgr.showHobbyAlbum();
+            });
+        // glass
+        this.m_glass = new Circle((stage.width * 1.5) / 2, white, black, 30)
+            .centerReg(this.m_holder)
+            .sca(1, .3)
+            .alp(0)
+            .mov(0, 400);
+        this.m_logo = new Logo(640, 50, .7, this.m_holder, true);
+
+        this.m_holder.centerReg().sca((this.m_stage.width + 100) / this.m_holder.width);
+        this.showRoom();
+    }
+    hide() {
+        this.m_glass.alp(0);
+        this.m_room.alp(0);
+    }
+    showRoom() {
+        this.m_status = 1;
+        this.m_glass.animate({
+            props: {alpha: 0}
+        });
+        this.m_room.animate({
+            props: {alpha:1}
+        });
+    }
+    showGlass() {
+        this.m_status = 2;
+        this.m_glass.animate({
+            props: {alpha: .1}
+        });
+        this.m_room.animate({
+            props: {alpha: 0}
+        });
+    }
+    change() {
+        if (this.m_status == 1) this.showGlass();
+        else this.showRoom();
+    }
+    addUIMgr(uiMgr) {
+        this.m_uiMgr = uiMgr;
+    }
+}
+
+// Use WorkDeskMgr class to manage Work Desk easily
+class WorkDeskMgr extends Base {
+    constructor(stage) {
+        super();
+        this.m_stage = stage;
+        this.m_holder = new Container(config.workDesk.width, config.workDesk.height).nam("WorkDeskMgr");
+
+        // top
+        const top = new Shape().addTo(this.m_holder);
+        top.graphics.f(config.workDesk.topColor).s().p("Eg7DALaITO2zMBPqAAAITPWzg");
+        top.loc(config.workDesk.width / 2, config.workDesk.topHeight / 2);
+        // top edge
+        const topEdge = new Rectangle(config.workDesk.width, config.workDesk.topDepth, config.workDesk.topEdgeColor)
+            .centerReg(this.m_holder)
+            .loc(config.workDesk.width / 2, config.workDesk.topHeight + config.workDesk.topDepth / 2)
+            .sha(black, 0, 2, 4);
+        const sheridanLogo = frame.asset("sheridan_logo.png")
+            .centerReg(topEdge)
+            .sca(.3)
+            .alp(.4)
+            .pos(20, 0, LEFT, CENTER);
+        // drawer body
+        const drawerBody = new Rectangle(config.workDesk.drawerBodyWidth, config.workDesk.bodyHeight, config.workDesk.bodyColor)
+            .centerReg(this.m_holder)
+            .loc(config.workDesk.drawerBodyWidth / 2 + 20, topEdge.y + topEdge.height / 2 + config.workDesk.bodyHeight / 2);
+        // drawers
+        new Tile({
+            obj: new Rectangle(config.workDesk.drawerWidth, config.workDesk.drawerHeight, config.workDesk.drawerColor),
+            cols: 1,
+            rows: 3,
+            spacingV: 10
+        })
+            .centerReg(this.m_holder)
+            .loc(drawerBody)
+            .sha(black, 0, 2, 4);
+        // leg
+        const leg = new Rectangle(config.workDesk.legWidth, config.workDesk.bodyHeight, config.workDesk.bodyColor)
+            .centerReg(this.m_holder)
+            .loc(config.workDesk.width - config.workDesk.legWidth / 2 - 20, topEdge.y + topEdge.height / 2 + config.workDesk.bodyHeight / 2);
+        topEdge.top();
+        // shadow
+        new Triangle(40, drawerBody.height, getSideOfRightTriangle(40, drawerBody.height), config.workDesk.underColor)
+            .rot(180)
+            .centerReg(this.m_holder)
+            .loc(drawerBody.width + 40, drawerBody.y)
+            .bot();
+        new Triangle(drawerBody.height, 40, getSideOfRightTriangle(40, drawerBody.height), config.workDesk.underColor)
+            .rot(270)
+            .centerReg(this.m_holder)
+            .loc(leg.x - 34, drawerBody.y)
+            .bot();
+        // desk under
+        const under = new Rectangle(config.workDesk.width - config.workDesk.drawerBodyWidth - config.workDesk.legWidth, config.workDesk.bodyHeight, config.workDesk.bodyColor);
+        under.centerReg(this.m_holder)
+            .loc(drawerBody.width + under.width / 2, topEdge.y + under.height / 2 + 15)
+            .bot()
+            .alp(.3);
+        // computer base
+        const computerBase = new Triangle(config.workDesk.computerBaseSize, config.workDesk.computerBaseSize, config.workDesk.computerBaseSize, config.workDesk.computerEdgeColor, grey, 1, 4)
+            .centerReg(this.m_holder)
+            .loc(config.workDesk.width / 2 + 100, 10)
+
+        // keyboard
+        const keyboard = frame.asset("keyboard.png")
+            .centerReg(this.m_holder)
+            .sca(.6)
+            .loc(config.workDesk.width / 2 + 100, 100)
+            .sha(black, 0, 2, 4);
+        // space key
+        this.m_spacekey = new ImageButton("spacekey.png", config.workDesk.width / 2 + 72, 121, .6, this.m_holder);
+        // computer
+        this.m_computer = new Computer(config.workDesk.width / 2 + 100, -50, this);
+        // position
+        this.m_holder.centerReg().pos(200, 200, CENTER, CENTER);
+        this.m_holder.sca(1.5);
+    }
+
+    addPersonMgr(personMgr) {
+        this.m_personMgr = personMgr;
+        this.m_canAdd = false;
+        this.m_spacekey.setClickHandler((btn) => {
+            this.addPerson();
+        });
+        this.startTimer();
+    }
+
+    addUIMgr(uiMgr) {
+        this.m_uiMgr = uiMgr;
+    }
+
+    addPerson() {
+        if (this.m_canAdd) {
+            this.m_computer.hide();
+            this.m_personMgr.add();    // add a person
+            this.m_canAdd = false;
+            timeout(1, () => {
+                this.m_computer.show();
+                this.startTimer();
+            });
+            this.m_uiMgr.addControls();    // add buttons
+        }
+    }
+
+    showPhoto(bitmap) {
+        this.m_computer.showPhoto(bitmap);
+    }
+
+    showGuide() {
+        this.m_spacekey.showEffect();
+    }
+
+    getSkeletonPoints() {
+        this.m_hand.recordPoints(true);
+    }
+
+    startTimer() {
+        if (!this.m_timeout) this.m_timeout = config.workDesk.personInitialTimeout;
+        else this.m_timeout *= config.workDesk.personTimeoutMulitple;
+        timeout(this.m_timeout, () => {
+            this.m_computer.guide();
+            this.m_canAdd = true;
+        });
+    }
+
+    openDevFunctions() {
+        this.m_computer.placeCircles();
+    }
+}
+
+// Use PersonMgr class to manage persons easily
+class PersonMgr extends Base {
+    constructor(stage) {
+        super();
+        this.m_stage = stage;
+        this.m_holder = new Container(stage.width, stage.height)
+                            .nam("PersonMgr")
+                            .centerReg()
+                            .pos(0, 0, CENTER, CENTER);
+        // default
+        this.changeAction();
+    }
+
+    add() {
+        // body container
+        const person = new Container()
+                            .addTo(this.m_holder)
+                            .pos(360, -150, CENTER, CENTER)
+                            .nam("person")
+                            //.alp(0)
+                            .sca(.1);
+        this.addHead(person);
+        this.addSkeleton(person);
+        this.addSkill(person);
+
+        var destX, destY, destScale;
+        if (config.devEnable) {
+            person.drag({onTop: false});
+            // dest points
+            destScale = 1;
+            destX = this.m_stage.width / 2;
+            destY = this.m_stage.height / 2;
+        } else {
+            person.drag({onTop: false, currentTarget: true}); // or {all: true}
+            // dest points
+            destScale = rand(config.person.scaleMin, config.person.scaleMax);
+            const realWidth = person.width / person.scale;
+            const realHeight = person.height / person.scale;
+            destX = rand(realWidth / 2, this.m_holder.width - realWidth / 2);
+            destY = rand(realHeight / 2, this.m_holder.height - realHeight / 2);
+        }
+        // play sound
+        Music.getInstance().playVictory();
+        // show person by animation
+        person.animate({
+            props: {
+                //alpha: config.person.alpha,
+                scale: destScale,
+                x: destX,
+                y: destY
+            },
+            call: () => {
+                if (config.devEnable) {
+                    this.showPersonOutline(person);
+                }
+            }
+        });
+    }
+
+    // head
+    addHead(person) {
+        const head = new Sprite({json:asset("head.json")}).nam("head").addTo(person);
+        head.run({loop: true, label: "tongue", time: 1.5});
+    }
+
+    changeHeadForward() {
+        this.m_holder.loop(person => {
+            if (person.name == "person") {
+                const head = person.getChildByName("head");
+                this.m_area = calcMouseArea(person.x + head.x, person.y + head.y, this.m_stage.mouseX, this.m_stage.mouseY);
+                runSprite(head, this.m_area + "_forward", false);
+            }
+        });
+    }
+
+    changeHeadBack() {
+        this.m_holder.loop(person => {
+            if (person.name == "person") {
+                const head = person.getChildByName("head");
+                runSprite(head, this.m_area + "_back", false, .1, "talk");
+            }
+        });
+    }
+
+    // skeleton
+    addSkeleton(person) {
+        const skeleton = new Container().nam("skeleton").addTo(person);
+        const squiggle = new Squiggle({
+            thickness: 10,
+            color: red,
+            interactive: false
+            })
+            .nam("squiggle")
+            .centerReg(skeleton)
+            .sca(.6)
+            .pos(0, 50, CENTER, CENTER);
+        this.changeSkeleton(0);
+    }
+
+    // skill
+    addSkill(person) {
+        this.m_skillIndex = getIndex(this.m_skillIndex, config.person.skills.length);
+        const skill = new Label({
+            text: config.person.skills[this.m_skillIndex],
+            size: 12,
+            color: white,
+            backgroundColor: config.commBgColor,
+            lineHeight: 16,
+            padding: 4,
+            borderColor: white,
+            borderWidth: 4,
+        })
+            .nam("skill")
+            .centerReg(person)
+            .pos(30, 124, CENTER, CENTER);
+    }
+
+    changeSkeleton(index) {
+        this.m_skeletonIndex = index;
+        // change for each body
+        this.m_holder.loop(person => {
+            if (person.name == "person") {
+                const squiggle = person.getChildByName("skeleton").getChildByName("squiggle");
+                squiggle.points = config.person.skeletonPoints[index].points;
+                squiggle.color = config.person.skeletonPoints[index].colors[rand(0, config.person.skeletonPoints[index].colors.length - 1)];
+                this.wiggleHands(squiggle, config.person.skeletonPoints[index].hands);
+                if (config.devEnable) {
+                    this.showPersonOutline(person);
+                }
+            }
+        });
+    }
+
+    wiggleHands(squiggle, hands) {
+        loop(hands, index => {
+            const point = squiggle.pointControls[index];
+            point.wiggle("y", point.y, 4, 15, .5, 1);
+        });
+        Ticker.add(() => {
+            squiggle.update();
+        });
+    }
+
+    changeRandSkeleton() {
+        const index = rand(0, config.person.skeletonPoints.length - 1);
+        this.changeSkeleton(index);
+    }
+
+    changeNextSkeleton() {
+        if (this.m_skeletonIndex == undefined) return;
+        var index = this.m_skeletonIndex;
+        if (index >= config.person.skeletonPoints.length - 1) {
+            index = 0;
+        } else {
+            index += 1;
+        }
+        this.changeSkeleton(index);
+    }
+
+    changeAction(actionName) {
+        if (actionName) {
+            this.m_actionIndex = actionName;
+            this.act(actionName);
+        } else {
+            switch(this.m_actionIndex) {
+                case "talk":
+                    this.act("tongue", 1);
+                    this.m_actionIndex = "tongue";
+                    break;
+                case "tongue":
+                    this.act("mix", 5);
+                    this.m_actionIndex = "mix";
+                    break;
+                case "mix":
+                    this.act("talk", 1.2);
+                    this.m_actionIndex = "talk";
+                    break;
+                default:
+                    this.act("talk", 1.2);
+                    this.m_actionIndex = "talk";
+            }
+        }
+    }
+
+    showPersonOutline(person) {
+        person.outline(red);
+        person.getChildByName("skeleton").outline(green);
+        person.getChildByName("skeleton").getChildByName("squiggle").outline(blue);
+    }
+
+    getSkeletonPoints() {
+        this.m_holder.loop(person => {
+            if (person.name == "person") {
+                person.getChildByName("skeleton").getChildByName("squiggle").recordPoints(true);
+            }
+        });
+    }
+
+    act(label, time) {
+        this.m_holder.loop(person => {
+            if (person.name == "person") {
+                runSprite(person.getChildByName("head"), label, true, time);
+            }
+        });
+    }
+
+    move(delta) {
+        this.m_head.x += delta;
+    }
+
+    moveStep(direction) {
+        var step = 0;
+        if (direction == "left") step = -config.person.moveStep;
+        else if (direction == "right") step = config.person.moveStep;
+        this.m_head.x += step;
+    }
+
+    moveTo(mouseX) {
+        this.m_head.animate({
+            props: {x: mouseX},
+            ease: "linear",
+            time: 2
+        });
+    }
+}
+
+// Use UIMgr class to manage UI easily
+class UIMgr extends Base {
+    constructor(stage, landscapeMgr, studioRoomMgr, workDeskMgr, personMgr) {
+        super();
+        this.m_stage = stage;
+        this.m_landscapeMgr = landscapeMgr;
+        this.m_studioRoomMgr = studioRoomMgr;
+        this.m_workDeskMgr = workDeskMgr;
+        this.m_personMgr = personMgr;
+        this.m_holder = new Container(stage.width, stage.height).centerReg();
+        this.init();
+    }
+
+    init() {
+        // controls for development
+        if (config.devEnable) {
+            const btnSkeleton = new Button(200, 40, "Skeleton", red, grey).pos(10, 10, RIGHT, BOTTOM);
+            btnSkeleton.tap(() => {
+                this.m_personMgr.getSkeletonPoints();
+            });
+        }
+        // a loader just for snapshot (no need to display)
+        this.m_loader = new Loader().centerReg(this.m_stage).loc(-1000, -1000);
+
+        // control for switch view mode
+        new ImageButton("icon_view.png", 100, 100, .6, this.m_holder, config.commBgColor)
+                .setClickHandler((btn) => {
+                    this.m_studioRoomMgr.change();
+                });
+        // control for taking a snapshot
+        new ImageButton("icon_snapshot.png", this.m_stage.width - 100, this.m_stage.height - 100, .6, this.m_holder, config.commBgColor)
+                .setClickHandler((btn) => {
+                    this.snapshot();
+                });
+        // control for upload a photo
+        new ImageButton("icon_photo.png", this.m_stage.width - 300, this.m_stage.height - 100, .6, this.m_holder, config.commBgColor)
+                .setClickHandler((btn) => {
+                    this.addLoader();
+                });
+
+        // control for switch music off or on
+        const btnMusicSwitch = new ImageButton("icon_music_on.png", this.m_stage.width - 50, 50, .2, this.m_holder)
+                .setClickHandler((btn) => {
+                    if (Music.getInstance().switchStatus()) {
+                        btn.changeImage("icon_music_on.png");
+                    } else {
+                        btn.changeImage("icon_music_off.png");
+                    }
+                });
+
+        new ImageButton("icon_howtoplay.png", this.m_stage.width - 120, 50, .2, this.m_holder)
+                .setClickHandler((btn) => {
+                    zgo(config.howToPlay, "_blank");
+                });
+
+    }
+
+    addControls() {
+        // control for change behaviours
+        if (!this.m_btnTongue) {
+            this.m_btnTongue = new ImageButton("icon_tongue.png", 100, 300, .6, this.m_holder, config.commBgColor);
+            this.m_btnTongue.setClickHandler(() => {
+                //this.m_personMgr.changeAction();
+                this.m_personMgr.changeAction();
+            });
+        }
+        // control for change body
+        if (!this.m_btnBody) {
+            this.m_btnBody = new ImageButton("icon_body.png", 100, 500, .6, this.m_holder, config.commBgColor);
+            this.m_btnBody.setClickHandler(() => {
+                this.m_personMgr.changeNextSkeleton();
+            });
+        }
+    }
+
+    addLoader() {
+        this.m_loaderHolder = new Container(this.m_stage.width, this.m_stage.height)
+            .centerReg(this.m_stage);
+        // background as a mask
+        new Rectangle(this.m_stage.width, this.m_stage.height, black)
+            .centerReg(this.m_loaderHolder)
+            .alp(.9);
+        // loader
+        new Loader({
+            label: "UPLOAD YOUR PHOTO",
+            width: 600,
+            backgroundColor: config.commBgColor,
+            borderColor: white,
+            borderWidth: 6,
+            color: white
+        }).centerReg(this.m_loaderHolder)
+            .sca(1.4)
+            .on("loaded", (e) => {
+            this.showLoadedPhoto(e.bitmaps[0]);
+        });
+        // cancel button
+        new Button({
+            label: "CANCEL",
+            corner: 0,
+            backgroundColor: config.commBgColor,
+            borderColor: white,
+            borderWidth: 6,
+            width: 300
+        }).centerReg(this.m_loaderHolder)
+            .pos(0, 200, CENTER, CENTER)
+            .tap(() => {
+                this.removeLoader();
+            });
+    }
+
+    removeLoader() {
+        this.m_loaderHolder.dispose();
+    }
+
+    snapshot() {
+        this.m_loader.save();
+    }
+
+    showLoadedPhoto(bitmap) {
+        this.m_workDeskMgr.showPhoto(bitmap);
+        this.removeLoader();
+    }
+
+    showJobAlbum() {
+        if (!this.m_jobAlbum) {
+            this.m_jobAlbum = new Album(config.albums.jobs, this.m_stage.width / 2, this.m_stage.height / 2, 0.5, this.m_holder);
+        } else {
+            this.m_jobAlbum.show();
+        }
+    }
+
+    showHobbyAlbum() {
+        if (!this.m_hobbyAlbum) {
+            this.m_hobbyAlbum = new Album(config.albums.hobbies, this.m_stage.width / 2, this.m_stage.height / 2, 0.5, this.m_holder);
+        } else {
+            this.m_hobbyAlbum.show();
+        }
+    }
+}
+
+
+// See Docs under Frame for FIT, FILL, FULL, and TAG scaling modes
+const frame = new Frame(FIT, 1600, 800, black, darker);
+frame.on("ready", () => {
+    const stage = frame.stage;
+    let stageW = frame.width;
+    let stageH = frame.height;
+
+    // logo in the loading page
+    const logo = new Logo(stageW / 2, stageH / 2 - 100, 1, this.m_holder, false);
+    // a progress bar to see the progress of loading
+    var progressBar = new ProgressBar({
+        barType: "rectangle",
+        foregroundColor: white,
+        backgroundColor: config.commBgColor,
+        corner: 0,
+        borderColor: white,
+        borderWidth: 3,
+    });
+    // load assets
+    frame.loadAssets(assets, assetPath, progressBar);
+    frame.on("complete", () => {
+        logo.remove();
+        start();    // when assets are loaded, start the game
+    });
+
+    // function definitions
+    function start() {
+        Music.getInstance().playBGM();
+
+        // create all kinds of managers
+        const landscapeMgr = new LandscapeMgr(stage);
+        const studioRoomMgr = new StudioRoomMgr(stage);
+        const workDeskMgr = new WorkDeskMgr(stage);
+        const personMgr = new PersonMgr(stage);
+        const uiMgr = new UIMgr(stage, landscapeMgr, studioRoomMgr, workDeskMgr, personMgr);
+        workDeskMgr.addPersonMgr(personMgr);
+        workDeskMgr.addUIMgr(uiMgr);
+        studioRoomMgr.addUIMgr(uiMgr);
+
+        // parallax
+        if (config.parallaxEnable) {
+            new Parallax([
+                {obj: landscapeMgr.getHolder(), prop: "x", propChange: 50},
+                {obj: studioRoomMgr.getHolder(), prop: "x", propChange: 100},
+                {obj: workDeskMgr.getHolder(), prop: "x", propChange: 200},
+            ]);
+        }
+
+        // bind events
+        stage.on("stagemousedown", (e) => {
+            personMgr.changeHeadForward();
+        });
+        stage.on("stagemouseup", () => {
+            personMgr.changeHeadBack();
+        });
+        frame.on("keydown", (e) => {
+            if (e.keyCode == config.keyCodes.space) {
+                workDeskMgr.addPerson();
+            }
+        });
+    }
+
+    stage.update();
+});
+
+</script>
+<meta name="viewport" content="width=device-width, user-scalable=no" />
+</head>
+<body></body>
+</html>
