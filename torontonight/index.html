@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>TORONTO NIGHT</title>
+<meta name="viewport" content="width=device-width, user-scalable=no" />
+
+<!-- zimjs.com - JavaScript Canvas Framework -->
+<script src="libs/createjs_1.3.4_min.js"></script>
+<script src="libs/zim_nft_00_min.js"></script>
+<script src="utils.js"></script>
+<script src="helper.js"></script>
+<script src="font.js"></script>
+<script src="drone.js"></script>
+<script>
+
+const version = "1.0.9";
+const devMode = false;
+
+var shows = {
+    actions: [
+        // for development
+        // {
+        //     name: "flyTo",
+        //     duration: 8,
+        //     matrix: {rows: 1, cols: 1},
+        //     z: 1000,
+        //     speed: {min: 200, max: 300} // or a int value
+        // },
+        // {
+        //     name: "stop",
+        // },
+        //
+        {
+            name: "wait",
+            duration: 1,
+        },
+        {
+            name: "turnLightOn",
+            duration: 3,
+        },
+        {
+            name: "flyTo",
+            duration: 6,
+            text: "3",
+            z: 1000,
+            speed: {min: 200, max: 200}
+        },
+        {
+            name: "flyTo",
+            duration: 3,
+            text: "2",
+            z: 1000,
+            speed: {min: 1000, max: 1000}
+        },
+        {
+            name: "flyTo",
+            duration: 3,
+            text: "1",
+            z: 1000,
+            speed: {min: 1000, max: 1000}
+        },
+        {
+            name: "turnLightOff",
+            duration: 1,
+        },
+        {
+            name: "flyTo",
+            duration: 10,
+            text: "TORONTO",
+            z: 1000,
+            speed: {min: 200, max: 300}
+        },
+        {
+            name: "fly",
+            duration: 6,
+            x: -300,
+            y: 0,
+            z: 0,
+            speed: {min: 200, max: 200}
+        },
+        {
+            name: "fly",
+            duration: 6,
+            x: 600,
+            y: 0,
+            z: 0,
+            speed: {min: 200, max: 200}
+        },
+        {
+            name: "flyTo",
+            duration: 6,
+            text: "SHERIDAN",
+            z: 1000,
+            speed: {min: 200, max: 300}
+        },
+        {
+            name: "flyTo",
+            duration: 6,
+            text: "DRONE LIGHT SHOW",
+            z: 1000,
+            speed: {min: 200, max: 300}
+        },
+        {
+            name: "flyTo",
+            duration: 6,
+            matrix: {rows: 6, cols: 30},
+            z: 1000,
+            speed: {min: 200, max: 300} // or a int value
+        },
+        {
+            name: "flyTo",
+            duration: 10,
+            destinations:[
+                [794,145],[853,126],[838,120],[820,116],[801,121],[792,129],[906,116],
+                [938,118],[1023,114],[1006,107],[1021,99],[1034,92],[772,138],[826,164],
+                [891,123],[922,116],[951,124],[970,169],[718,278],[1009,120],[994,128],
+                [1015,130],[1042,117],[723,146],[747,137],[811,154],[843,148],[868,143],
+                [869,129],[964,137],[968,155],[891,300],[718,296],[738,282],[795,244],
+                [1030,123],[827,221],[707,197],[730,238],[794,299],[923,187],[866,283],
+                [966,186],[744,300],[774,256],[812,231],[982,134],[1033,106],[711,168],
+                [719,223],[761,271],[782,286],[808,313],[913,157],[918,204],[823,327],
+                [838,315],[958,203],[949,219],[941,235],[930,249],[886,307],[875,300],
+                [747,257],[892,145],[922,170],[908,224],[896,238],[886,252],[877,268],
+                [852,299],[920,265],[908,279],[900,290]
+            ],
+            z: 1000,
+            speed: {min: 200, max: 300}
+        },
+        {
+            name: "flyTo",
+            duration: 10,
+            destinations:[
+                [1410,548],[1446,585],[1539,627],[1527,618],[1483,596],
+                [1475,583],[1460,582],[1432,590],[1398,526],[482,674],
+                [1419,564],[1896,695],[1855,666],[468,684],[1631,649],
+                [1609,692],[1612,663],[658,583],[1738,656],[1754,676],
+                [1771,693],[1819,675],[1871,685],[1551,644],[1509,615],
+                [1365,510],[1251,604],[1308,495],[1321,502],[1427,577],
+                [1607,680],[1617,654],[1495,612],[512,648],[1837,660],
+                [1791,686],[1716,659],[1683,659],[1595,690],[1658,654],
+                [382,652],[431,671],[611,573],[563,599],[595,595],[1579,684],
+                [1558,659],[1386,513],[1285,471],[1277,452],[1203,452],[1255,448],
+                [1351,506],[1129,434],[1054,465],[1096,459],[1171,441],[1135,414],
+                [51,805],[199,715],[182,734],[141,777],[238,683],[288,678],[339,668],
+                [98,792],[520,632],[528,606],[1569,673],[1294,487],[1159,425],[1225,446],
+                [1339,504],[1144,626],[1118,449],[1145,400],[973,573],[960,529],[966,552],
+                [997,575],[1019,571],[1035,556],[1040,531],[1053,517],[1057,497],[1055,479],
+                [1061,450],[1078,454],[31,813],[68,797],[119,792],[165,757],[213,692],
+                [262,679],[316,679],[356,652],[407,654],[447,686],[547,592],[577,607],
+                [747,602],[682,597],[705,608],[731,619],[757,587],[497,662],[778,580],
+                [799,572],[824,580],[849,603],[873,622],[894,618],[916,603],[926,577],
+                [931,554],[935,530],[946,513]
+            ],
+            z: 1000,
+            speed: {min: 200, max: 300}
+        },
+        {
+            name: "flyTo",
+            duration: 10,
+            destinations:[
+                [561,36],[608,36],[655,36],[702,36],[749,36],[814,147],[1012,87],[995,97],
+                [1004,90],[959,43],[979,70],[991,89],[1112,149],[1170,36],[1217,36],[1264,36],
+                [1311,36],[1358,36],[561,72],[608,72],[655,72],[702,72],[749,72],[926,95],
+                [853,154],[868,131],[968,53],[973,61],[986,79],[1109,161],[1170,72],[1217,72],
+                [1264,72],[1311,72],[1358,72],[561,109],[608,109],[655,109],[702,109],[749,109],
+                [825,194],[843,154],[861,148],[881,147],[1026,164],[1052,135],[1066,154],[1104,174],
+                [1170,109],[1217,109],[1264,109],[1311,109],[1358,109],[561,145],[608,145],[655,145],
+                [702,145],[749,145],[812,155],[830,152],[864,138],[875,138],[900,85],[1089,153],
+                [1101,150],[1099,182],[1170,145],[1217,145],[1264,145],[1311,145],[1358,145],
+                [914,91],[947,64],[561,181],[608,181],[655,181],[702,181],[749,181],[818,171],
+                [815,162],[888,155],[896,163],[1022,86],[1011,174],[1016,171],[1098,193],[1170,181],
+                [1217,181],[1264,181],[1311,181],[1358,181],[936,86],[941,78],[953,53],[561,218],
+                [608,218],[655,218],[702,218],[749,218],[806,211],[818,204],[702,327],[1076,242],
+                [1087,233],[1097,224],[1098,202],[1170,218],[1217,218],[1264,218],[1311,218],
+                [1358,218],[1015,300],[968,310],[1014,109],[900,114],[907,132],[912,151],[915,161],
+                [561,254],[608,254],[655,254],[702,254],[749,254],[820,183],[822,225],[813,218],
+                [1043,268],[1056,258],[1067,250],[1037,276],[1107,217],[1170,254],[1217,254],
+                [1264,254],[1311,254],[1358,254],[1007,154],[1041,291],[1018,98],[901,101],
+                [904,120],[910,141],[860,255],[561,290],[608,290],[655,290],[702,290],[749,290],
+                [954,333],[828,231],[953,294],[936,290],[966,294],[1044,304],[1115,210],[1036,153],
+                [1170,290],[1217,290],[1264,290],[1311,290],[1358,290],[1004,164],[1012,130],
+                [1008,142],[900,94],[838,239],[851,250],[868,263],[876,270],[954,313],[917,172],
+                [561,327],[608,327],[655,327],[749,327],[954,346],[953,359],[876,303],[965,324],
+                [989,295],[979,293],[968,341],[968,358],[1170,327],[1217,327],[1264,327],[1311,327],
+                [1358,327],[1056,147],[1044,142],[1012,118],[1030,301],[906,172],[845,244],[881,278],
+                [890,301],[908,299],[925,296],[955,302]
+            ],
+            z: 1000,
+            speed: {min: 200, max: 300}
+        },
+        {
+            name: "flyTo",
+            duration: 6,
+            text: "THANK YOU !",
+            z: 1000,
+            speed: {min: 200, max: 300}
+        },
+        {
+            name: "flyAway",
+            duration: 4,
+            speed: {min: 100, max: 100} // or a int value
+        },
+        {
+            name: "turnLightOn",
+            duration: 0,
+        },
+        {
+            name: "showMenu",
+            duration: 0,
+        },
+    ],
+}
+
+const assets = [
+    "landscape.png",
+    "buildings.png",
+    "tower.png",
+    "light_orange.png",
+    "drone.png",
+    "laser1.png",
+    "laser2.png",
+    "laser3.png",
+    "laser4.png",
+    "laser5.png",
+    "laser6.png",
+    "icon_snapshot.png",
+    "icon_play.png",
+    "icon_replay.png",
+    "icon_share.png",
+    "icon_music_on.png",
+    "icon_music_off.png",
+    "bgm.mp3",
+    "drone.mp3",
+    "hit.mp3"
+];
+const assetPath = "assets/";
+const config = {
+    ui: {
+        btnAlpha: .8,
+        btnColor: red,
+    },
+    city: {
+        darkLuminance: .4,
+        lightLuminance: 1,
+    },
+    drone: {
+        colors: [black, grey],
+        powerLightColor: "#80ff00",
+        directionLightColor: "#ff0000",
+        mainLightMaxScale: 8,
+        mainLightMinScale: 3,
+        zMax: 1000,
+    },
+    show: {
+        droneInitCount: 200,
+        showArea: { // for display drones
+            height: 400 // from the top of stage
+        },
+        parkingArea: {  // for parking drones
+            offsetFromBottom: 1000, // from bottom of stage
+            countOfEachRow: 3,   // drones count of each row
+            spaceH: 700,    // horizontal space
+            spaceV: 300,    // vertical space
+        },
+        customizeIndexs: [6, 9, 10],
+    },
+    lasers: [
+        [100, 100, "up"],
+        [200, 100, "up"],
+    ],
+    snapshotName: "toronto_night"
+};
+
+var baseScale = 1;
+
+class Laser {
+    constructor(parent, x, y, type = 1, direction = "up") {
+        this.m_parent = parent;
+        this.m_direction = direction;
+        this.m_laser = frame.asset(`laser${type}.png`).clone().reg(169, 11).alp(0);
+        this.m_laser.rot(90);
+        this.m_laser.pos(x - this.m_laser.height / 2, y - this.m_laser.width / 2, CENTER, BOTTOM, parent);
+    }
+
+    turnOn() {
+        let rotation = 0;
+        if (this.m_direction == "up") {
+            rotation = this.m_laser.rotation + 180;
+        } else if (this.m_direction == "down") {
+            rotation = this.m_laser.rotation - 180
+        }
+        this.m_laser.alp(1);
+        this.m_laser.animate({
+            props: {rotation: rotation},
+            rewind: true,
+            loop: true,
+            time: rand(4, 6),
+        });
+    }
+
+    turnOff() {
+        this.m_laser.animate({
+            props: {alpha: 0},
+            time: .5,
+        });
+    }
+}
+
+class ShowEngine {
+    constructor(stage, cityMgr) {
+        this.m_stage = stage;
+        this.m_cityMgr = cityMgr;
+        this.m_dronesContainer = new Container(stage.width, stage.height).centerReg();
+        this.m_drones = [];
+        this.m_timeouts = [];
+        this.m_currentTimeout = 0;
+        // make some drones frist
+        this.doAction({name: "make", duration: 0, count: config.show.droneInitCount});
+        this.customizeActions(URLUtils.getURLJsonData());
+    }
+
+    setUiMgr(uiMgr) {
+        this.m_uiMgr = uiMgr;
+    }
+
+    customizeActions(texts) {
+        if (!texts) return;
+        zog(texts);
+        let i = 0;
+        loop(config.show.customizeIndexs, actionIndex => {
+            if (i > texts.length) return false;
+            shows.actions[actionIndex].text = texts[i];
+            i ++;
+        });
+    }
+
+    // run
+    run() {
+        zogg("ShowEngine run...");
+        // play bgm
+        Music.getInstance().playBGM("bgm.mp3");
+        // hide buttons
+        this.m_uiMgr.hide();
+        // init timeout
+        this.m_currentTimeout = 0;
+        // clear timeouts
+        loop(this.m_timeouts, timeout => {
+            timeout.clear();
+        });
+        this.m_timeouts.length = 0;
+        // loop actions
+        loop(shows.actions, (action, i) => {
+            zogg(`${i} action: ${action.name} duration: ${action.duration} timeout: ${this.m_currentTimeout}`);
+            let timeout = this.doAction(action);
+            this.m_currentTimeout += action.duration;
+            if (typeof(timeout) == "object") {
+                this.m_timeouts.push(timeout);  // save timeouts for clearing
+            } else if (typeof(timeout) == "boolean") {
+                return timeout;
+            }
+        });
+    }
+
+    // execute an action
+    doAction(action) {
+        switch(action.name) {
+            case ("make"):
+                return timeout(this.m_currentTimeout, () => {
+                    this.makeDrones(action);
+                });
+                break;
+            case ("wait"):
+                break;
+            case ("flyTo"):
+                return timeout(this.m_currentTimeout, () => {
+                    this.flyTo(action);
+                });
+                break;
+            case ("fly"):
+                return timeout(this.m_currentTimeout, () => {
+                    this.fly(action);
+                });
+                break;
+            case ("flyAway"):
+                return timeout(this.m_currentTimeout, () => {
+                    this.flyAway(action);
+                });
+                break;
+            case ("turnLightOn"):
+                return timeout(this.m_currentTimeout, () => {
+                    this.m_cityMgr.turnLightOn();
+                });
+                break;
+            case ("turnLightOff"):
+                return timeout(this.m_currentTimeout, () => {
+                    this.m_cityMgr.turnLightOff();
+                });
+                break;
+            case ("showMenu"):
+                return timeout(this.m_currentTimeout, () => {
+                    Music.getInstance().stopBGM();
+                    this.m_uiMgr.show();
+                });
+                break;
+            case ("stop"):
+                return false;
+        }
+    }
+
+    makeFeaturedDrone(pos, isLightOn = false) {
+        let drone = new FeaturedDrone(this.m_dronesContainer, pos.x, pos.y);
+        if (isLightOn) drone.showMainLight();
+        else drone.hideMainLight();
+        return drone;
+    }
+
+    // action-related interfaces
+    makeDrones(action) {
+        if (action.count) {
+            loop(action.count, i => {
+                let pos = getParkingPos(config.show.parkingArea, i);
+                this.m_drones.push(this.makeFeaturedDrone(pos));
+            });
+        }
+    }
+
+    flyTo(action) {
+        let destinations = [];
+        // get destinations
+        if (action.matrix) {   // matrix
+            // compute destinations if configed rows, cols and z
+            let baseWidth = this.m_stage.width / (action.matrix.cols + 1);
+            let baseHeight = config.show.showArea.height / (action.matrix.rows + 1);
+            for (let row = 0; row < action.matrix.rows; row ++) {
+                for (let col = 0; col < action.matrix.cols; col ++) {
+                    destinations.push([(col + 1) * baseWidth, (row + 1) * baseHeight]);
+                }
+            }
+        } else if (action.destinations) {   // destinations
+            // get destinations if configed destinations
+            destinations = action.destinations;
+        } else if (action.text) {   // text
+            let points = getFontPoints(action.text, 0, 0, this.m_stage.width, config.show.showArea.height);
+            destinations = points.positions;
+        }
+
+        // fly to destinations
+        loop(this.m_drones, (drone, i) => {
+            if (i < destinations.length) {
+                drone.flyTo(destinations[i][0], destinations[i][1], action.z, action.speed);
+            } else {    // redundant drones fly away
+                drone.flyBack();
+            }
+        });
+    }
+
+    fly(action) {
+        loop(this.m_drones, (drone) => {
+            if (!drone.isParking()) {
+                drone.fly(action.x, action.y, action.z, action.speed);
+            }
+        });
+    }
+
+    flyAway(action) {
+        loop(this.m_drones, (drone) => {
+            drone.flyBack();
+        });
+    }
+
+    // development related interfaces
+    getPostions() {
+        let positions = [];
+        loop(this.m_drones, (drone) => {
+            if (drone.isShowed()) {
+                positions.push(drone.getPos());
+            }
+        });
+        return positions;
+    }
+}
+
+class CustomizeMgr {
+    constructor(stage, showEngine) {
+        this.m_stage = stage;
+        this.m_showEngine = showEngine;
+    }
+
+    // show
+    show() {
+        Music.getInstance().playAudio("drone.mp3", .02);
+        if (this.m_holder) {
+            this.m_holder.addTo();
+        } else {
+            this.m_holder = new Container(this.m_stage.width, this.m_stage.height)
+                .centerReg(this.m_stage).top();
+            this._makeBg();
+            this._makeLogo();
+            this._makeDrone();
+            this._makeForm();
+        }
+        // form animation
+        this.m_form.startX = this.m_form.x;
+        this.m_form.animate({
+            props: {x: 2000},
+            from: true,
+            time: .4,
+            ease: "backOut"
+        });
+        // drone animation
+        this.m_drone.doAnimate({
+            props: {x: 400},
+            time: .4,
+            ease: "backOut"
+        });
+    }
+    // hide
+    hide() {
+        if (this.m_holder) {
+            // form animation
+            this.m_form.animate({
+                props: {x: 2000},
+                time: .4,
+                ease: "backOut",
+                call: () => {
+                    this.m_form.x = this.m_form.startX;
+                    this.m_holder.removeFrom();
+                }
+            });
+            // drone animation
+            this.m_drone.flyBack();
+        }
+    }
+
+    _makeBg() {
+        new Rectangle(this.m_holder.width, this.m_holder.height, black)
+            .centerReg(this.m_holder)
+            .alp(.9);
+    }
+
+    _makeLogo() {
+        new NathanLabel("TORONTO NIGHT")
+            .centerReg(this.m_holder)
+            .sca(.6)
+            .pos(50, 50, LEFT, TOP);
+    }
+
+    _makeDrone() {
+        this.m_drone = new SmartDrone(this.m_holder);
+        this.m_drone.setPos(-500, this.m_holder.height / 2);
+        this.m_drone.showShakingEffect(true);
+
+    }
+
+    _makeForm() {
+        // container
+        this.m_form = new Container(this.m_stage.width, this.m_stage.height)
+            .centerReg(this.m_holder);
+        // background
+        new Circle(this.m_form.height, red)
+            .centerReg(this.m_form)
+            .pos(this.m_form.height, this.m_form.height / 4, CENTER, CENTER)
+            .alp(.4);
+
+        // version, title and developer
+        new Label({text: "V" + version, color: white, size: 20})
+                .centerReg(this.m_form)
+                .pos(10, 10, RIGHT, TOP);
+        new Label({text: "Customize your show", color: white, size: 30})
+                .centerReg(this.m_form)
+                .pos(this.m_form.width / 4 + 100, -350, CENTER, CENTER);
+        new Label({text: "Developed by Nathan (373578963@qq.com)", color: white, size: 20})
+                .centerReg(this.m_form)
+                .pos(400, 100, CENTER, BOTTOM)
+                .tap(() => {
+                    zgo("https://swnumaster.github.io/", "_blank");
+                });
+        new Label({text: "Powered by ZIM (zimjs.com)", color: white, size: 20})
+                .centerReg(this.m_form)
+                .pos(400, 60, CENTER, BOTTOM)
+                .tap(() => {
+                    zgo("https://zimjs.com", "_blank");
+                });
+
+        // labels and inputs
+        let labels = ["Firstly", "Secondly", "Finally"];
+        let objArray = [];
+        loop(labels, (label) => {
+            objArray.push(new Label({
+                text: label,
+                color: white,
+                size: 20,
+            }));
+            objArray.push(new TextInput({
+                width: 300,
+                placeholder: "Less than 16 characters",
+                size: 20,
+                maxLength: 16,
+                borderWidth: 0,
+            }));
+        });
+        this.m_inputs = new Tile({
+            obj: objArray,
+            unique: true,
+            cols: 2,
+            rows: 3,
+            spacingH: 40,
+            spacingV: 40,
+            valign: "center"
+        }).centerReg(this.m_form);
+        this.m_inputs.pos(this.m_form.width / 4 + 100, -this.m_inputs.height, CENTER, CENTER);
+
+        loop(this.m_inputs.items, item => {
+            if (item.type == "TextInput") {
+                item.on("change", () => {
+                    this._genShareLink();
+                });
+            }
+        });
+
+        // preview button
+        new Button({
+                width: 300,
+                height: 50,
+                label: new Label({
+                    text: "PREVIEW",
+                    color: white,
+                    size: 20,
+                }),
+                backgroundColor: config.ui.btnColor,
+                rollBackgroundColor: config.ui.btnColor,
+                corner: 25,
+            })
+            .centerReg(this.m_form)
+            .pos(this.m_form.width / 4 + 100, 0, CENTER, CENTER)
+            .tap(() => {
+                let link = this._genShareLink();
+                zgo(link, "_blank");
+            });
+
+        // copy button
+        new Button({
+                width: 300,
+                height: 50,
+                label: new Label({
+                    text: "COPY LINK TO SHARE",
+                    color: white,
+                    size: 20,
+                }),
+                backgroundColor: config.ui.btnColor,
+                rollBackgroundColor: config.ui.btnColor,
+                corner: 25,
+            })
+            .centerReg(this.m_form)
+            .pos(this.m_form.width / 4 + 100, 80, CENTER, CENTER)
+            .tap(() => {
+                CopyUtils.copyText(this._genShareLink());
+            });
+
+        // close button
+        new Button({
+            width: 100,
+            height: 50,
+            label: new Label({
+                text: "CLOSE",
+                color: white,
+                size: 20,
+            }),
+            backgroundColor: config.ui.btnColor,
+            rollBackgroundColor: config.ui.btnColor,
+            corner: 25,
+            })
+            .centerReg(this.m_form)
+            .pos(40, 100, RIGHT, BOTTOM)
+            .tap(() => {
+                this.hide();
+            });
+    }
+
+    _genShareLink() {
+        let texts = [];
+        loop(this.m_inputs.items, item => {
+            if (item.type == "TextInput") {
+                let text = item.text.trim();
+                if (text.length > 0) texts.push(text);
+            }
+        });
+        return URLUtils.getURLWithJsonData(texts);
+    }
+
+    _setInputBorder() {
+        loop(this.m_inputs.items, item => {
+            if (item.type == "TextInput") {
+            }
+        });
+    }
+}
+
+class CityMgr {
+    constructor(stage) {
+        this.m_stage = stage;
+        this.m_holder = new Container(stage.width, stage.height)
+            .sca(baseScale)
+            .centerReg(this.m_stage)
+            .pos(0, 0, CENTER, BOTTOM)
+            .alp(0);
+
+        this.m_lasers = [];
+        this.makeCity();
+        this.m_holder.animate({
+            props: {alpha: config.city.darkLuminance}, // city initial luminance
+            time: 2
+        });
+    }
+
+    makeCity() {
+        this.m_lasers.push(new Laser(this.m_holder, -800, 80, 1));
+        this.m_lasers.push(new Laser(this.m_holder, 800, 80, 3));
+        this.m_buildings = frame.asset("buildings.png")
+            .centerReg(this.m_holder)
+            .pos(-100, 160, CENTER, BOTTOM)
+            .ske(0, 180)
+            .alp(.6);
+        this.m_lasers.push(new Laser(this.m_holder, -400, 80, 5));
+        this.m_lasers.push(new Laser(this.m_holder, 400, 80, 6));
+        this.m_tower = frame.asset("tower.png")
+            .centerReg(this.m_holder)
+            .pos(-320, 150, CENTER, BOTTOM);
+        this.m_lasers.push(new Laser(this.m_holder, -150, 80, 1));
+        this.m_lasers.push(new Laser(this.m_holder, 150, 80, 2));
+        this.m_landscape = frame.asset("landscape.png")
+            .centerReg(this.m_holder)
+            .pos(0, 0, CENTER, BOTTOM);
+        this.m_lasers.push(new Laser(this.m_holder, -600, 80, 1));
+        this.m_lasers.push(new Laser(this.m_holder, -300, 80, 2));
+        this.m_lasers.push(new Laser(this.m_holder, 0, 80, 3));
+        this.m_lasers.push(new Laser(this.m_holder, 300, 80, 4));
+        this.m_lasers.push(new Laser(this.m_holder, 600, 80, 5));
+        this.m_lasers.push(new Laser(this.m_holder, -310, 420, 1, "down")); // in tower
+    }
+
+    turnLightOn() {
+        animateAlpha(this.m_holder, config.city.lightLuminance);
+        loop(this.m_lasers, laser => {
+            laser.turnOn();
+        });
+    }
+
+    turnLightOff() {
+        zog("turnLightOff");
+        animateAlpha(this.m_holder, config.city.darkLuminance);
+        loop(this.m_lasers, laser => {
+            laser.turnOff();
+        });
+    }
+}
+
+class UIMgr {
+    constructor(stage, showEngine, customizeMgr) {
+        this.m_stage = stage;
+        this.m_showEngine = showEngine;
+        this.m_customizeMgr = customizeMgr;
+        this.m_holder = new Container(stage.width, stage.height).centerReg(this.m_stage);
+        this.makeButtons();
+    }
+
+    makeButtons() {
+        this.m_snapshot = new CustomizedButton(this.m_holder, 80, devMode, 40, 40, RIGHT, BOTTOM, "icon_snapshot.png", () => {
+            this.snapshot();
+        });
+
+        this.m_play = new CustomizedButton(this.m_holder, 80, devMode, -100, 0, CENTER, CENTER, "icon_play.png", () => {
+            this.m_customizeMgr.hide();
+            this.m_showEngine.run();
+        });
+
+        this.m_replay = new CustomizedButton(this.m_holder, 80, false, -100, 0, CENTER, CENTER, "icon_replay.png", () => {
+            this.m_customizeMgr.hide();
+            this.m_showEngine.run();
+        });
+
+        this.m_share = new CustomizedButton(this.m_holder, 80, devMode, 100, 0, CENTER, CENTER, "icon_share.png", () => {
+            this.m_customizeMgr.show();
+        });
+
+        this.m_music = new CustomizedButton(this.m_holder, 40, devMode, 10, 10, RIGHT, TOP, "icon_music_on.png", () => {
+            if (Music.getInstance().switch()) {
+                this.m_music.changeIcon("icon_music_on.png");
+            } else {
+                this.m_music.changeIcon("icon_music_off.png");
+            }
+        });
+
+        if (devMode) {
+            new CustomizedButton(this.m_holder, 80, true, 0, 40, CENTER, BOTTOM, "icon_snapshot.png", () => {
+                let positions = this.m_showEngine.getPostions();
+                CopyUtils.copyText(convertPositions(positions));
+            });
+        }
+        this.show();
+    }
+
+    hide() {
+        zog("hide buttons");
+        this.m_share.hide();
+        this.m_replay.hide();
+        this.m_play.hide();
+        this.m_snapshot.show();
+    }
+
+    show() {
+        zog("show buttons");
+        this.m_share.show();
+        this.m_music.show();
+        if (this.m_isReplay) {
+            this.m_replay.show();
+        } else {
+            this.m_play.show();
+            this.m_isReplay = true;
+        }
+        this.m_snapshot.hide();
+    }
+
+    snapshot() {
+        const loader = new Loader().centerReg(this.m_stage).loc(-1000, -1000);
+        this.m_holder.alp(0);
+        loader.save(this.m_stage, config.snapshotName);
+        loader.dispose();
+        this.m_holder.alp(1);
+    }
+}
+
+class LoadingMgr {
+    constructor(stage, completeHandler) {
+        this.m_stage = stage;
+        this.m_completeHandler = completeHandler;
+        this.m_label = new NathanLabel("TORONTO NIGHT")
+            .centerReg(stage);
+        this.m_label.startEffect();
+        this.m_progressBar = new ProgressBar({
+            barType: "rectangle",
+            foregroundColor: white,
+            backgroundColor: red,
+            corner: 0,
+            borderColor: white,
+            borderWidth: 3,
+        }).alp(0);
+        this.m_interval = interval(.1, () => {
+            this.m_label.updateEffect(this.m_progressBar.percent);
+        }, null, true);
+        frame.loadAssets(assets, assetPath, this.m_progressBar);
+        frame.on("complete", () => {
+            this.m_label.animate({
+                props: {alpha: 0},
+                call: () => {
+                    this.complete();
+                }
+            });
+        });
+    }
+
+    complete() {
+        this.m_interval.clear();
+        this.m_label.dispose();
+        this.m_progressBar.dispose();
+        this.m_completeHandler();
+    }
+}
+
+function init(width, height) {
+    window.frame = new Frame({
+        scaling: FIT, width: width, height: height, color: white, outerColor: black,
+        // gpu: true
+    });
+
+    zim.pauseOnBlur = false;
+
+    frame.on("ready", () => {
+        const stage = frame.stage;
+        let stageW = frame.width;
+        let stageH = frame.height;
+
+        // a black bg for snapshot
+        new Rectangle(stage.width, stage.height, black).centerReg();
+
+        let url = URLUtils.getURLWithJsonData({a: "xxx", b: "<html>"});
+        zog(URLUtils.getURLJsonData());
+
+        new LoadingMgr(stage, startGame);
+
+        // start game
+        function startGame() {
+            // IMPORTANT
+            baseScale = stageW / frame.asset("landscape.png").width;
+            // display the scene
+            const cityMgr = new CityMgr(stage);
+            // Create an engine
+            const showEngine = new ShowEngine(stage, cityMgr);
+            // Create an customize manager
+            const customizeMgr = new CustomizeMgr(stage, showEngine);
+            // Create an UI manager
+            const uiMgr = new UIMgr(stage, showEngine, customizeMgr);
+            showEngine.setUiMgr(uiMgr);
+        }
+        stage.update();
+    });
+}
+</script>
+<style>
+body, html {
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+</style>
+</head>
+<body>
+    <script>
+        window.onload = () => {
+            let width = document.body.clientWidth;
+            let height = document.body.clientHeight;
+            if (width < 1500) {
+                width = 1920;
+                height = 1000;
+            }
+            init(width, height);
+        };
+    </script>
+</body>
+</html>

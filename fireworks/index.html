@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Fantasy Fireworks Lab</title>
+<meta name="viewport" content="width=device-width, user-scalable=no" />
+<link rel="shortcut icon" type="image/x-icon" href="assets/favicon128x128.png" />
+
+<!-- zimjs.com - JavaScript Canvas Framework -->
+<script src="libs/createjs_1.3.4_min.js"></script>
+<script src="libs/zim_nft_00_min.js"></script>
+<script src="utils.js"></script>
+<script src="font.js"></script>
+<script src="helper.js"></script>
+<script src="parts.js"></script>
+<script>
+
+const version = "1.1.1";
+const devMode = false;
+
+let assets = [
+    "icon_music_on.png",
+    "icon_music_off.png",
+    "icon_button_red.png",
+    "icon_button_green.png",
+    "castle.png",
+    "sky.jpg",
+    "laser1.png",
+    "chalkflag.png",
+    "chalkstar.png",
+    "chalkflower.png",
+    "package_front_paper.jpg",
+    "package_top_paper.png",
+    "particle_white.png",
+    "window.png",
+    "bgm.mp3",
+    "hit.mp3",
+    "victory.mp3",
+    "bgm_fireworks.mp3",
+    "preface.mp3",
+    "down.mp3",
+    "paste.mp3",
+    "finish.mp3",
+    "back.mp3",
+    {font: "ItcKrist", src: "itckrist.ttf"},
+];
+const assetPath = "assets/";
+const config = {
+    shelf: {
+        cellSize: [200, 200],
+        color: "#f7b76c".toAlpha(.7),
+        borderColor: "#f7b76c",
+        borderWidth: 8,
+        corner: 10
+    },
+    items: {
+        padCellSize: 200,
+        padShelf: {title: "Pads", cols: 1, rows: 3},
+        pads: [
+            {
+                name: "pad3in1",
+                outerSize: 270,
+                realSize: 230, /* width = height = 230 */
+                pipeSize: 100,
+                positions: [[0,-58,0],[-50,32,1],[50,32,1]],
+                inSlotScaleX: 2,
+                inSlotScaleY: 1,
+                info: [['               Name:', '3-IN-1 Pad'], ['               Usage:', 'Drag into the table']]
+            },
+            {
+                name: "pad4in1",
+                outerSize: 300,
+                realSize: 260,
+                pipeSize: 100,
+                positions: [[-50,50,1],[50,50,1],[50,-50,0],[-50,-50,0]],
+                inSlotScaleX: 2,
+                inSlotScaleY: 1,
+                info: [['               Name:', '4-IN-1 Pad'], ['               Usage:', 'Drag into the table']]
+            },
+            {
+                name: "pad7in1",
+                outerSize: 360,
+                realSize: 320,
+                pipeSize: 100,
+                positions: [[-50,90,2],[50,90,2],[-100,0,1],[0,0,1],[100,0,1],[-50,-90,0],[50,-90,0]],
+                inSlotScaleX: 2,
+                inSlotScaleY: 1,
+                info: [['               Name:', '7-IN-1 Pad'], ['               Usage:', 'Drag into the table']]
+            }
+        ],
+        pipeCellSize: 100,
+        pipeShelf: {title: "Pipes", cols: 4, rows: 5},
+        pipes: [
+            {
+                name: "pipe1", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_purple.png", particle: "particle_orange.png", flower: "flower_purple_1.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 1'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe2", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_purple.png", particle: "particle_orange.png", flower: "flower_purple_2.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 2'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe3", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_purple.png", particle: "particle_orange.png", flower: "flower_purple_3.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 3'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe4", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_purple.png", particle: "particle_orange.png", flower: "flower_purple_4.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 4'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe5", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_orange.png", particle: "particle_orange.png", flower: "flower_orange_1.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 5'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe6", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_orange.png", particle: "particle_orange.png", flower: "flower_orange_2.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 6'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe7", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_orange.png", particle: "particle_orange.png", flower: "flower_orange_3.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 7'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe8", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_orange.png", particle: "particle_orange.png", flower: "flower_orange_4.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 8'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe9", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_orange.png", particle: "particle_orange.png", flower: "flower_orange_5.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 9'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe10", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_orange.png", particle: "particle_orange.png", flower: "flower_orange_6.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 10'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe11", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_orange.png", particle: "particle_orange.png", flower: "flower_orange_7.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 11'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe12", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_orange.png", particle: "particle_orange.png", flower: "flower_orange_8.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 12'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe13", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_red.png", particle: "particle_orange.png", flower: "flower_red_1.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 13'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe14", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_red.png", particle: "particle_orange.png", flower: "flower_red_2.png",
+                speed: {min: 1600, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 14'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe15", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_red.png", particle: "particle_orange.png", flower: "flower_red_3.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 15'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe16", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_blue.png", particle: "particle_orange.png", flower: "flower_blue_1.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 16'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe17", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_blue.png", particle: "particle_orange.png", flower: "flower_blue_2.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 17'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe18", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_blue.png", particle: "particle_orange.png", flower: "flower_blue_3.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 18'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe19", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_blue.png", particle: "particle_orange.png", flower: "flower_blue_4.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 19'], ['               Usage:', 'Drag into the pad']]
+            },
+            {
+                name: "pipe20", outerSize: 300, inSlotScaleX: 2,inSlotScaleY: 2,
+                face: "pipe_blue.png", particle: "particle_orange.png", flower: "flower_blue_5.png",
+                speedY: {min: 1200, max: 1800}, gravity: 1600,
+                info: [['               Name:', 'Fireworks pipe 20'], ['               Usage:', 'Drag into the pad']]
+            },
+        ]
+    },
+    pad: {
+        color: "#333",
+        borderColor: white,
+        borderWidth: 4,
+        pipeColor: green,
+        nearestPipeColor: blue,
+        pipeBorderColor: white,
+        pipeBorderWidth: 2
+    },
+    fireworks: {
+        speedX: {min: -200, max: 200},
+        speedY: {min: 1400, max: 1600},
+        emitInterval: {min: .5, max: 1},
+        flowerBaseAlpha: 1,
+        flowerDuration: {min: 200, max: 300},    // frames: 1s is about 50 frames
+        flowerBaseScale: {min: 0.5, max: 1},
+        particleBaseScaleY: {min: .5, max: 1.2},
+        deltaForScaleY: 20,
+        gravity: 1600,
+        frameRate: 50,  // frame count each second
+    },
+    prefaces: [
+        {particle: "particle_white.png", toCenterX: -600, toBottomY: 120, delay: 0, duration: 15, speedX: {min: -150, max: -100}, speedY: {min: 600, max: 800}, interval: {min: .05, max: .1}},
+        {particle: "particle_white.png", toCenterX: -700, toBottomY: 120, delay: 1, duration: 15, speedX: {min: -150, max: -100}, speedY: {min: 600, max: 800}, interval: {min: .05, max: .1}},
+        {particle: "particle_white.png", toCenterX: -800, toBottomY: 120, delay: 2, duration: 15, speedX: {min: -150, max: -100}, speedY: {min: 600, max: 800}, interval: {min: .05, max: .1}},
+        {particle: "particle_white.png", toCenterX: 600, toBottomY: 120, delay: 0, duration: 15, speedX: {min: 100, max: 150}, speedY: {min: 600, max: 800}, interval: {min: .05, max: .1}},
+        {particle: "particle_white.png", toCenterX: 700, toBottomY: 120, delay: 1, duration: 15, speedX: {min: 100, max: 150}, speedY: {min: 600, max: 800}, interval: {min: .05, max: .1}},
+        {particle: "particle_white.png", toCenterX: 800, toBottomY: 120, delay: 2, duration: 15, speedX: {min: 100, max: 150}, speedY: {min: 600, max: 800}, interval: {min: .05, max: .1}},
+    ],
+    scene: {
+        wallColor: "#666",
+        whiteboardColor: "#175800",
+        whiteboardBorderColor: "#f7b76c",
+        deskColor: "#252ddc",
+        packageInsideColor: blue,
+        baseOffsetY: 180,
+        prefaceDuration: 4,
+        defaultInfo: [
+            ["                                  Hot to make fireworks"],
+            ["1. Drag a Pad onto the table"],
+            ["2. Drag some Pipes onto the Pad"],
+            ["3. Once you're done, press Play!"],
+            ["Note: you can see details of the items by clicking on them."],
+            [{text: "Developed by: Nathan, Reynold, Aly", color: red}],
+            [{text: "Powered by ZIMJS. Thanks, Dan", color: red}],
+            ["                                                                                         v" + version],
+        ]
+    },
+    ui: {
+        labelBtnColor: white,
+        btnAlpha: .8,
+        labTitle: "Fantasy Fireworks Lab",
+    }
+};
+
+// *****************************************************************************
+//  LabMgr
+// *****************************************************************************
+class LabMgr {
+    constructor(sceneMgr) {
+        this.m_sceneMgr = sceneMgr;
+        this.m_labArea = sceneMgr.getLabArea();
+
+        // *********************************************************************
+        // create parts in the lab
+        this.createDesk();
+        this.createWhiteboard();
+        this.createPhotoFrame();
+        this.createShelves();
+        this.createFireworks();
+        this.createGuide();
+        this.createPackage();
+        this.createLabels();
+
+        // *********************************************************************
+        // init the inital step
+        this.currentStep = 0;
+        this.m_steps = [];
+        let step = {
+            slots: [{ // add step 0 slot
+                name: "inital_slot_0",
+                x: this.m_fireworks.width / 2,
+                y: this.m_fireworks.height / 2,
+                obj: null,  // what obj the slot is related to
+                level: 0,
+                item: null, // what item in the slot
+            }]
+        }
+        this.m_steps.push(step);
+    }
+
+    // *************************************************************************
+    // desk
+    createDesk() {
+        new Desk().pos(0, 800, CENTER, CENTER, this.m_labArea);
+    }
+
+    // *************************************************************************
+    // whiteboard
+    createWhiteboard() {
+        this.m_whiteboard = new Whiteboard(700, 400, config.scene.defaultInfo);
+        this.m_whiteboard.addTo(this.m_labArea).pos(0, 150, CENTER, TOP);
+    }
+    getWhiteboard() {
+        return this.m_whiteboard;
+    }
+
+    // *************************************************************************
+    // photo frame
+    createPhotoFrame() {
+        this.m_photoFrame = new PhotoFrame(300, 200, asset("castle.png"));
+        this.m_photoFrame.addTo(this.m_labArea).pos(1450, 200, LEFT, TOP);
+    }
+    getPhotoFrame() {
+        return this.m_photoFrame;
+    }
+
+    // *************************************************************************
+    // shelves
+    createShelves() {
+        // pad shelf to place pads
+        let pads = [];
+        loop(config.items.pads, (configItem, i) => {
+            pads.push(new Pad(configItem, this));
+        });
+        this.m_padShelf = new Shelf(
+            this.m_labArea,
+            pads,
+            config.items.padShelf.title,
+            config.items.padShelf.cols,
+            config.items.padShelf.rows,
+            config.items.padCellSize
+        );
+        this.m_padShelf.show();
+
+        // pipe shelf to place pipes
+        let pipes = [];
+        loop(config.items.pipes, configPipe => {
+            pipes.push(new Pipe(configPipe, this));
+        });
+        this.m_pipeShelf = new Shelf(
+            this.m_labArea,
+            pipes,
+            config.items.pipeShelf.title,
+            config.items.pipeShelf.cols,
+            config.items.pipeShelf.rows,
+            config.items.pipeCellSize
+        );
+    }
+
+    // *************************************************************************
+    // fireworks
+    createFireworks() {
+        // fireworks
+        this.m_fireworks = new Container(800, 400)
+            .nam("fireworks")
+            .centerReg(this.m_labArea)
+            .pos(0, 300, CENTER, CENTER);
+    }
+    getFireworks() {
+        return this.m_fireworks;
+    }
+    shakeFireworks() {
+        this.m_fireworks.wiggle("y", this.m_fireworks.y, 2, 6, .2, .3);
+    }
+    unshakeFireworks() {
+        this.m_fireworks.pauseAnimate();
+    }
+
+    // *************************************************************************
+    // labels
+    createLabels() {
+        this.m_baseOffset = 400;
+        this.m_labelRemake = new LabelButton("Make more", 80, config.ui.labelBtnColor,
+            this.m_baseOffset-2600, this.m_labArea.height/2 + 200, this.m_labArea,
+            () => {
+                this.remake();
+            }, false);
+        this.m_labelUse = new LabelButton("Play", 100, config.ui.labelBtnColor,
+            this.m_labArea.width-this.m_baseOffset+2600, this.m_labArea.height/2 + 200, this.m_labArea,
+            () => {
+                this.play();
+            }, true);
+    }
+    showLabels() {
+        animateMoveTo(this.m_labelRemake, this.m_baseOffset);
+        animateMoveTo(this.m_labelUse, this.m_labArea.width-this.m_baseOffset);
+    }
+    hideLabels() {
+        animateMoveTo(this.m_labelRemake, this.m_baseOffset-2600);
+        animateMoveTo(this.m_labelUse, this.m_labArea.width-this.m_baseOffset+2600);
+    }
+
+    // *************************************************************************
+    // slots
+    getNearestSlot(from, setColor = false) {
+        const index = MathUitls.getNearestObj(from, this.m_steps[this.currentStep].slots);
+        // set special color for the nearest slot
+        if (setColor) {
+            loop(this.m_steps[this.currentStep].slots, (slot, i) => {
+                if (slot.obj) {
+                    if (i == index) {
+                        slot.obj.color = config.pad.nearestPipeColor;
+                    } else {
+                        slot.obj.color = config.pad.pipeColor;
+                    }
+                }
+            });
+        }
+        return this.m_steps[this.currentStep].slots[index];
+    }
+
+    resetSlotsColor() {
+        loop(this.m_steps[this.currentStep].slots, slot => {
+            if (slot.obj) {
+                slot.obj.color = config.pad.pipeColor;
+            }
+        });
+    }
+
+    // IMPORTANT!!!
+    onSlotChange(slots) { // call when each slot is placed by an item
+        if (devMode) {
+            zogo("slots: ", slots);
+        }
+
+        // update new display layer levels for pipes
+        loop(this.m_steps[this.currentStep].slots, slot => {
+            if (slot.item) {   // has an item
+                const level = slot.level === undefined ? 0 : slot.level;
+                slot.item.level = this.currentStep + level;
+            }
+        });
+
+        // check the step should finish or not
+        // If all slots are placed an item for the current step, should finish
+        let gotoNextStep = true;
+        loop(this.m_steps[this.currentStep].slots, slot => {
+            if (!slot.item) {   // has no item
+                gotoNextStep = false;
+            }
+        });
+        // If true, finish the step and set new slots for the next step
+        if (gotoNextStep) {
+            this.currentStep ++;    // change to the next step
+            this.m_steps[this.currentStep] = {slots: slots};    // set slots for the current step
+
+            // do actions regarding different steps
+            if (this.currentStep == 1) {    // if entering step 1 (a pad is ready)
+                this.stopPadMouse();
+                this.m_padShelf.hide();
+                this.m_pipeShelf.show();
+            } else if (this.currentStep == 2) { // if entering step 2 (pipes is ready)
+                this.stopPipeMouse();
+                this.m_pipeShelf.hide();
+                this.finish();
+            }
+        }
+
+        // debug info
+        this.debugSlots();
+    }
+    resetSlots() {
+        // pad, pipes
+        let items = [];
+        this.m_fireworks.loop(item => {
+            if (item.name.substr(0, 3) == "pad" || item.name.substr(0, 4) == "pipe") {
+                items.push(item);
+            }
+        });
+        loop(items, item => {
+            item.moveToShelf();
+        });
+
+        // step and show padShelf
+        this.currentStep = 0;
+        this.m_padShelf.show();
+    }
+    stopPadMouse() {
+        this.m_fireworks.loop(item => {
+            if (item.name.substr(0, 3) == "pad") {
+                item.stopMouse();
+                return true;
+            }
+        });
+    }
+    stopPipeMouse() {
+        this.m_fireworks.loop(item => {
+            if (item.name.substr(0, 4) == "pipe") {
+                item.stopMouse();
+            }
+        });
+    }
+    startAllMouse() {
+        this.m_fireworks.loop(item => {
+            if (item.name.substr(0, 3) == "pad" || item.name.substr(0, 4) == "pipe") {
+                item.startMouse();
+            }
+        });
+    }
+
+    // *************************************************************************
+    // guide
+    createGuide() {
+        // guide
+        this.m_guide = new Squiggle({
+            points: [[0, 0], [100, 100]],
+            color: white,
+            thickness: 10,
+            dashed: true
+        }).nam("guide").alp(0).loc(0, 0, this.m_fireworks);
+        this.m_guideArrow1 = new Shape();
+        this.m_guideArrow1.graphics.f(white).s().p("AjlD4ID3j4Ij3j2IBqhrIFhFhIlhFig");
+        this.m_guideArrow1.nam("guideArrow1").alp(0).loc(100, 100, this.m_fireworks).sca(.7);
+        this.m_guideArrow2 = new Shape();
+        this.m_guideArrow2.graphics.f(green).s().p("AjlD4ID3j4Ij3j2IBqhrIFhFhIlhFig");
+        this.m_guideArrow2.nam("guideArrow2").alp(0).loc(100, 100, this.m_fireworks).sca(.7);
+    }
+
+    updateGuide(startX, startY, endX, endY, touched) {
+        let guideArrow;
+        if (touched) {
+            this.m_guide.color = green;
+            guideArrow = this.m_guideArrow2;
+            this.m_guideArrow1.alp(0);
+        } else {
+            this.m_guide.color = white;
+            guideArrow = this.m_guideArrow1;
+            this.m_guideArrow2.alp(0);
+        }
+        this.m_guide.points = [[startX, startY], [endX, endY]];
+        this.m_guide.top();
+        guideArrow.loc(endX, endY);
+        guideArrow.top();
+        let rotation = MathUitls.getDegree(endY - startY, endX - startX)
+        if (startX > endX) {
+            rotation += 180;
+        }
+        guideArrow.rot(rotation);
+        this.m_guide.alp(.5);
+        guideArrow.alp(.5);
+    }
+
+    hideGuide() {
+        this.m_guide.alp(0);
+        this.m_guideArrow1.alp(0);
+        this.m_guideArrow2.alp(0);
+    }
+
+    // *************************************************************************
+    // package
+    createPackage() {
+        // package
+        let adjust = 2;
+        const padRadius = 50;
+        this.m_backPaperStartX = padRadius*2+padRadius + adjust;
+        this.m_backPaperEndX = padRadius;
+        this.m_frontPaperStartX = -padRadius - adjust;
+        this.m_frontPaperEndX = padRadius;
+        this.m_topStartY = -800;
+        this.m_topEndY = this.m_fireworks.height/2;
+
+        // package back
+        this.m_packageBack = new Container(padRadius*2, padRadius).nam("packageBack");
+        let backMask = new Shape();
+        backMask.graphics.f(grey).s().p("AFhFFQiShJjPAAQjPAAiRBJQiRBIgCBlIAArpQAAhoCThJQCRhJDPAAQDPAACSBJQCTBJAABoIAALpQgChliRhIg");
+        backMask.reg(0, padRadius).loc(padRadius, padRadius/2, this.m_packageBack).alp(0);
+        this.m_packageBack.centerReg(this.m_fireworks).sca(4.8);
+        this.m_backPaper = new Rectangle(padRadius*2, padRadius*2, config.scene.packageInsideColor)
+            .reg(padRadius, padRadius*2)
+            .loc(this.m_backPaperStartX, backMask.y, this.m_packageBack);
+        this.m_backPaper.setMask(backMask);
+
+        // package front
+        this.m_packageFront = new Container(padRadius*2, padRadius).nam("packageFront");
+        let frontMask = new Shape();
+        frontMask.graphics.f(grey).s().p("AlgGpQiThJAAhoIAArpQACBmCRBHQCRBJDPAAQDPAACShJQCQhHADhmIAALpQAABoiTBJQiSBJjPAAQjPAAiRhJg");
+        frontMask.reg(0, padRadius/2).loc(padRadius, padRadius/2, this.m_packageFront).alp(0);
+        this.m_packageFront.centerReg(this.m_fireworks).sca(4.8);
+        this.m_frontPaper = new Container(padRadius*2, padRadius*2)
+            .reg(padRadius, padRadius*3/2)
+            .loc(this.m_frontPaperStartX, frontMask.y, this.m_packageFront);
+        let frontBg = asset("package_front_paper.jpg").clone();
+        frontBg.centerReg(this.m_frontPaper).sca(padRadius*2/frontBg.width, padRadius*2/frontBg.height);
+        this.m_frontPaper.setMask(frontMask);
+
+        // package top
+        this.m_packageTop = new Container(padRadius*2, padRadius).nam("packageTop");
+        let topMask = new Circle(padRadius, red).sca(1, .5).loc(padRadius, -padRadius, this.m_packageTop).alp(0);
+        this.m_topPaper = new Container(padRadius*2, padRadius*2)
+            .loc(0, -padRadius*2, this.m_packageTop);
+        let topBg = asset("package_top_paper.png").clone();
+        topBg.centerReg(this.m_topPaper).sca(padRadius*2/topBg.width, padRadius*2/topBg.height);
+        this.m_packageTop.centerReg(this.m_fireworks).loc(this.m_fireworks.width/2, this.m_topStartY).sca(4.8);
+        this.m_topPaper.setMask(topMask);
+    }
+    showPackage() {
+        const pad = this.m_fireworks.loop(item => {
+            if (item.name.substr(0, 3) == "pad") {
+                return item;
+            }
+        });
+        if (pad) {
+            const scale = (pad.getBack().width * pad.scale + 15)/100;
+            this.m_packageBack.sca(scale);
+            this.m_packageFront.sca(scale);
+            this.m_packageTop.sca(scale);
+            this.m_packageBack.bot();
+            this.m_packageFront.top();
+            this.m_packageTop.top();
+            Music.getInstance().playAudio("paste.mp3");
+            this.m_backPaper.animate({
+                props: {x: this.m_backPaperEndX},
+                call: () => {
+                    Music.getInstance().playAudio("paste.mp3");
+                    this.m_frontPaper.animate({
+                        props: {x: this.m_frontPaperEndX},
+                    });
+                    this.m_packageTop.animate({
+                        props: {y: this.m_topEndY},
+                        call: () => {
+                            Music.getInstance().playAudio("down.mp3");
+                            this.createVictory();
+                            this.shakeFireworks();
+                        }
+                    });
+
+                }
+            });
+        }
+    }
+    hidePackage() {
+        this.unshakeFireworks();
+        // package top
+        this.m_packageTop.animate({
+            props: {y: this.m_topStartY}
+        });
+        // package front, package back
+        this.m_frontPaper.animate({
+            props: {x: this.m_frontPaperStartX},
+            call: () => {
+                this.m_backPaper.animate({
+                    props: {x: this.m_backPaperStartX}
+                });
+            }
+        });
+    }
+
+    // *************************************************************************
+    // victory effect
+    createVictory() {
+        let flowers = [];
+        loop(config.items.pipes, pipe => {
+            flowers.push(asset(pipe.flower).clone().sca(.6).alp(.7));
+        });
+        Music.getInstance().playAudio("victory.mp3");
+        this.m_vicotry = new Emitter({
+            //obj: new Poly(50,[5,6,7],.5,[red,green,blue]),
+            obj: flowers,
+            life: 3,
+            startPaused: true
+        }).centerReg(this.m_labArea).pos(0, -200, CENTER, TOP);
+        this.m_vicotry.spurt(30);
+        timeout(5, () => {
+            this.m_vicotry.dispose();
+        });
+    }
+
+    // *************************************************************************
+    // finish
+    finish() {
+        this.showPackage();
+        this.showLabels();
+    }
+
+    // play it
+    play() {
+        let pipes = [];
+        this.m_fireworks.loop(pipe => {
+            if (pipe.name.substr(0, 4) == "pipe") {
+                pipes.push(pipe.name);
+            }
+        });
+        if (!this.m_used) {
+            this.m_sceneMgr.getShowMgr().addFireworks(pipes);
+            this.m_used = true;
+        }
+        this.m_sceneMgr.showShowArea();
+    }
+
+    // remake one
+    remake() {
+        this.m_used = false;
+        this.startAllMouse();
+        this.hideLabels();
+        this.hidePackage();
+        this.resetSlots();
+        this.debugFireworks();
+    }
+
+    // *************************************************************************
+    // debug
+    debugSlots() {
+        if (!devMode) return;
+        let slots = this.m_steps[this.currentStep].slots;
+        let readySlotCount = 0;
+        loop(slots, slot => {
+            if (slot.item) {
+                readySlotCount ++;
+            }
+        });
+        zogb(
+            "currentStep:", this.currentStep,
+            "currentSlots:", slots,
+            "readySlotCount:", readySlotCount,
+            "/", slots.length
+        );
+    }
+
+    debugFireworks() {
+        if (!devMode) return;
+        this.m_fireworks.loop(item => {
+            if (!item.name) {
+                zogr("No name item", item);
+            }
+            zogg(`labArea/fireworks/${item.name}`);
+        });
+    }
+}
+
+// *****************************************************************************
+//  ShowMgr
+// *****************************************************************************
+class ShowMgr {
+    constructor(sceneMgr) {
+        this.m_sceneMgr = sceneMgr;
+        this.m_showArea = sceneMgr.getShowArea();
+        this.m_fireworks = [];
+    }
+
+    // preface
+    createPrefaces() {
+        // left
+        for (let i = 0; i < config.prefaces.length; i ++) {
+            const preface = config.prefaces[i];
+            let emitter = new FireworksEmitter(
+                asset(preface.particle),
+                null,
+                preface.speedX,
+                preface.speedY,
+                preface.interval,
+                preface.delay
+            )
+                .nam("preface")
+                .centerReg(this.m_showArea)
+                .pos(preface.toCenterX, preface.toBottomY, CENTER, BOTTOM);
+        }
+    }
+
+    playPrefaces() {
+        this.m_showArea.loop(emitter => {
+            if (emitter.name == "preface") {
+                emitter.run();
+            }
+        });
+    }
+
+    pausePrefaces() {
+        this.m_showArea.loop(emitter => {
+            if (emitter.name == "preface") {
+                emitter.pause();
+            }
+        });
+    }
+
+    // fireworks
+    addFireworks(pipes) {
+        this.m_showArea.disposeAllChildren();
+        this.m_fireworks.push(pipes);
+        const baseCount = this.m_fireworks.length;
+        const unitX = this.m_showArea.width / (baseCount + 1);
+        loop(this.m_fireworks, (pipes, i) => {
+            let base = new Container(30, 30)
+                .centerReg(this.m_showArea)
+                .loc(unitX*(i+1), this.m_showArea.height - config.scene.baseOffsetY)
+                .drag({all: true});
+            loop(pipes, pipeName => {
+                const configPipe = this.getPipe(pipeName);
+                if (configPipe) {
+                    new FireworksEmitter(asset(configPipe.particle), asset(configPipe.flower), null, configPipe.speedY)
+                        .nam("fireworks")
+                        .sca(.6)
+                        .centerReg(base);
+                    new Circle(15, red).alp(.2).centerReg(base).animate({props: {alpha: .5}, rewind: true, loop: true});
+                }
+            });
+        });
+
+        this.createPrefaces();
+    }
+
+    playFireworks() {
+        this.m_isPlaying = true;
+        this.m_sceneMgr.stopLight();
+        // play preface first
+        Music.getInstance().playBGM("preface.mp3");
+        this.playPrefaces();
+        timeout(config.scene.prefaceDuration, () => {
+            // pause preface first
+            this.pausePrefaces();
+            // play fireworks
+            Music.getInstance().playBGM("bgm_fireworks.mp3");
+            this.m_showArea.loop(base => {
+                base.loop(emitter => {
+                    if (emitter.name == "fireworks") emitter.run();
+                });
+            });
+        });
+    }
+
+    pauseFireworks() {
+        this.m_isPlaying = false;
+        this.m_sceneMgr.startLight();
+        Music.getInstance().playBGM("bgm.mp3");
+        this.m_showArea.loop(base => {
+            base.loop(emitter => {
+                if (emitter.name == "fireworks") emitter.pause();
+            });
+        });
+    }
+
+    isPlaying() {
+        return this.m_isPlaying;
+    }
+
+    getPipe(name) {
+        let pipe = loop(config.items.pipes, pipe => {
+            if (pipe.name == name) return pipe;
+        });
+        if (pipe === true || pipe === false) return false;
+        return pipe;
+    }
+}
+
+// *****************************************************************************
+// Scene manager
+// *****************************************************************************
+class SceneMgr {
+    constructor(stage) {
+        this.m_stage = stage;
+        this.m_leftShowX = 0;
+        this.m_leftHideX = -stage.width;
+        this.m_rightShowX = 0;
+        this.m_rightHideX = stage.width;
+        this.m_allY = 0;
+        this.createScene();
+    }
+
+    createScene() {
+        // Containers layer levels
+        //      all are the children of stage
+        //      all reg points are (0,0)
+        // --------------stage---------------
+        // -------------background-----------
+        // -------------showArea-------------
+        // ------------------------------wallwindow-----------------------------
+        // --------------labArea-------------
+        // ---------------------------------UI----------------------------------
+        // --------------Screen--------------
+        const stageW = this.m_stage.width;
+        const stageH = this.m_stage.height;
+        // sky, castle, lasters
+        this.createBackground();
+
+        // playArea
+        this.m_showArea = new Container(stageW, stageH)
+            .loc(0, 0, this.m_stage);
+        // wallwindow
+        this.m_wallWindow = new WallWindow(this.m_stage);
+        // labArea
+        this.m_labArea = new Container(stageW, stageH)
+            .loc(this.m_leftShowX, 0, this.m_stage);
+        // UI
+        this.m_UI = new Container(stageW * 2, stageH)
+            .loc(0, 0, this.m_stage);
+        // play button
+        this.m_playButton = new CustomizedButton(this.m_UI, 200, true, stageW / 2, 20, CENTER, BOTTOM, "icon_button_red.png", red.toAlpha(0), () => {
+            this.m_playButton.sleep(5);
+            if (this.m_showMgr.isPlaying()) {
+                this.m_playButton.changeIcon("icon_button_red.png");
+                this.m_showMgr.pauseFireworks();
+            } else {
+                this.m_playButton.changeIcon("icon_button_green.png");
+                this.m_showMgr.playFireworks();
+            }
+        });
+        // return button
+        new LabelButton("Make more", 60, config.ui.labelBtnColor,
+            this.m_UI.width / 2 + 200, this.m_UI.height - 70, this.m_UI,
+            () => {
+                this.showLabArea();
+            }, false);
+
+        // LabMgr and ShowMgr
+        this.m_labMgr = new LabMgr(this);
+        this.m_showMgr = new ShowMgr(this);
+    }
+
+    createBackground() {
+        // background
+        this.m_sky = asset("sky.jpg");
+        this.m_sky
+            .sca(this.m_stage.width/this.m_sky.width, this.m_stage.height/this.m_sky.height)
+            .centerReg(this.m_stage);
+        // castle
+        this.m_castle1 = asset("castle.png").clone().sca(.6);
+        this.m_castle1.pos(-410, 100, CENTER, BOTTOM, this.m_stage);
+        this.m_castle2 = asset("castle.png").clone().sca(.6);
+        this.m_castle2.pos(410, 100, CENTER, BOTTOM, this.m_stage);
+        this.m_castle3 = asset("castle.png").sca(.8);
+        this.m_castle3.pos(0, 100, CENTER, BOTTOM, this.m_stage);
+        // laser
+        this.m_laser1 = new Laser(this.m_stage, -600, 80, 1);
+        this.m_laser1.turnOn();
+        this.m_laser2 = new Laser(this.m_stage, -200, 80, 1);
+        this.m_laser2.turnOn();
+        this.m_laser3 = new Laser(this.m_stage, 200, 80, 1);
+        this.m_laser3.turnOn();
+        this.m_laser4 = new Laser(this.m_stage, 600, 80, 1);
+        this.m_laser4.turnOn();
+        this.m_laser5 = new Laser(this.m_stage, 33, 754, 1, "down");
+        this.m_laser5.turnOn();
+
+        // parallax
+        // if (true) {
+        //     this.m_parallex = new Parallax([
+        //         {obj: this.m_sky, prop: "x", propChange: 50},
+        //         {obj: this.m_castle, prop: "x", propChange: 100},
+        //     ]);
+        //     this.m_parallex.pause();
+        // }
+    }
+
+    startLight() {
+        this.m_laser1.turnOn();
+        this.m_laser2.turnOn();
+        this.m_laser3.turnOn();
+        this.m_laser4.turnOn();
+        this.m_laser5.turnOn();
+        this.m_castle1.alp(1);
+        this.m_castle2.alp(1);
+        this.m_castle3.alp(1);
+        this.m_sky.alp(1);
+    }
+
+    stopLight() {
+        this.m_laser1.turnOff();
+        this.m_laser2.turnOff();
+        this.m_laser3.turnOff();
+        this.m_laser4.turnOff();
+        this.m_laser5.turnOff();
+        this.m_castle1.alp(.2);
+        this.m_castle2.alp(.2);
+        this.m_castle3.alp(.2);
+        this.m_sky.alp(.3);
+    }
+
+    getLabArea() {
+        return this.m_labArea;
+    }
+
+    getShowArea() {
+        return this.m_showArea;
+    }
+
+    getLabMgr() {
+        return this.m_labMgr;
+    }
+
+    getShowMgr() {
+        return this.m_showMgr;
+    }
+
+    resetPlayButton() {
+        this.m_playButton.changeIcon("icon_button_red.png");
+    }
+
+    showLabArea() {
+        this.resetPlayButton();
+        // pause first
+        this.m_showMgr.pauseFireworks();
+        // this.m_parallex.pause();
+        animateMoveTo(this.m_wallWindow, this.m_leftShowX, 0);
+        animateMoveTo(this.m_labArea, this.m_leftShowX, 0);
+        animateMoveTo(this.m_UI, this.m_leftShowX, 0);
+    }
+
+    showShowArea() {
+        animateMoveTo(this.m_wallWindow, this.m_leftHideX, 0);
+        animateMoveTo(this.m_labArea, this.m_leftHideX, 0);
+        animateMoveTo(this.m_UI, this.m_leftHideX, 0);
+        // this.m_parallex.pause(false);
+    }
+}
+
+// *****************************************************************************
+// UI manager
+// *****************************************************************************
+class UIMgr {
+    constructor(stage) {
+        this.m_stage = stage;
+        this.m_holder = new Container(stage.width, stage.height).centerReg(this.m_stage);
+        this.makeButtons();
+    }
+
+    makeButtons() {
+        this.m_music = new CustomizedButton(this.m_holder, 40, true, 50, 40, RIGHT, BOTTOM, "icon_music_on.png", red, () => {
+            if (Music.getInstance().switch()) {
+                this.m_music.changeIcon("icon_music_on.png");
+            } else {
+                this.m_music.changeIcon("icon_music_off.png");
+            }
+        });
+        //
+        // if (devMode) {
+        //     new CustomizedButton(this.m_holder, 80, true, 0, 40, CENTER, BOTTOM, "icon_music_on.png", red, () => {
+        //         blob.recordPoints(true);
+        //     });
+        // }
+        // this.show();
+    }
+
+    hide() {
+    }
+
+    show() {
+        this.m_music.show();
+    }
+
+    snapshot() {
+        const loader = new Loader().centerReg(this.m_stage).loc(-1000, -1000);
+        this.m_holder.alp(0);
+        loader.save();
+        loader.dispose();
+        this.m_holder.alp(1);
+    }
+}
+
+class LoadingMgr {
+    constructor(stage, completeHandler) {
+        this.m_stage = stage;
+        this.m_completeHandler = completeHandler;
+        this.m_label = new NathanLabel("FANTASY FIREWORKS LAB")
+            .centerReg(stage)
+            .sca(.5);
+        this.m_label.startEffect();
+        this.m_progressBar = new ProgressBar({
+            barType: "rectangle",
+            foregroundColor: white,
+            backgroundColor: red,
+            corner: 0,
+            borderColor: white,
+            borderWidth: 3,
+        }).alp(0);
+        this.m_interval = interval(.1, () => {
+            this.m_label.updateEffect(this.m_progressBar.percent);
+        }, null, true);
+        this.getAssets();
+        frame.loadAssets(assets, assetPath, this.m_progressBar);
+        frame.on("complete", () => {
+            this.m_label.animate({
+                props: {alpha: 0},
+                call: () => {
+                    this.complete();
+                }
+            });
+        });
+    }
+
+    getAssets() {
+        loop(config.items.pipes, pipe => {
+            assets.push(pipe.face);
+            assets.push(pipe.particle);
+            assets.push(pipe.flower);
+        });
+    }
+
+    complete() {
+        this.m_interval.clear();
+        this.m_label.dispose();
+        this.m_progressBar.dispose();
+        this.m_completeHandler();
+    }
+}
+
+function init(width, height) {
+    window.frame = new Frame({
+        scaling: FIT, width: width, height: height, color: black, outerColor: black,
+        // gpu: true
+    });
+
+    frame.on("ready", () => {
+        const stage = frame.stage;
+        let stageW = frame.width;
+        let stageH = frame.height;
+
+        // a black bg for snapshot
+        //new Rectangle(stage.width, stage.height, black).centerReg();
+        new LoadingMgr(stage, startGame);
+
+        // start game
+        function startGame() {
+            Music.getInstance().playBGM("bgm.mp3");
+
+            // create an scene manager
+            const sceneMgr = new SceneMgr(stage);
+
+            // Create an UI manager
+            const uiMgr = new UIMgr(stage);
+        }
+        stage.update();
+    });
+}
+</script>
+<style>
+body, html {
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    background-color: black;
+}
+</style>
+</head>
+<body>
+    <script>
+        window.onload = () => {
+            let width = document.body.clientWidth;
+            let height = document.body.clientHeight;
+            if (width < 1500) {
+                width = 1920;
+                height = 1000;
+            }
+            init(width, height);
+        };
+    </script>
+</body>
+</html>
