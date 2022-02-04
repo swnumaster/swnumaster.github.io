@@ -1,0 +1,500 @@
+/*
+ * Meyer Reset
+ * Copy from https://css-tricks.com/snippets/css/meyer-reset/
+**/
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: baseline;
+}
+/* html5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+body {
+  line-height: 1.5;
+}
+ol,
+ul {
+  list-style: none;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+/*
+ * Copyright: JiangYingbing (Nathan) 373578963@qq.com
+ * Date: 2021/12/03
+ *
+ *  npm install less -g OR yarn add less -g
+ *  lessc static/css/default/ce.less static/css/default/ce.css
+**/
+/* common */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+body {
+  background-color: #efefef;
+  color: #333;
+}
+body,
+button,
+input,
+textarea,
+select {
+  font-family: 'Gotham', -apple-system, BlinkMacSystemFont, 'Arial', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-size: 1rem;
+}
+img {
+  display: block;
+  /* remove a few pixes below the image */
+  width: 100%;
+  height: auto;
+}
+button,
+input,
+textarea,
+select,
+header,
+footer,
+div,
+ul,
+li,
+a {
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+a,
+a:visited {
+  color: #333;
+  text-decoration: none;
+}
+p {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  line-height: 1.5rem;
+}
+/* button */
+button {
+  cursor: pointer;
+  width: 100%;
+  height: 2.5rem;
+  padding: 0;
+  border-radius: 6px;
+  border: 1px solid #29abe2;
+  background-color: transparent;
+  color: #29abe2;
+  font-weight: bold;
+  /* icon text button */
+  /* icon button */
+}
+button.ce-active {
+  background-color: #29abe2;
+  color: white;
+}
+button.ce-small {
+  height: 1.5rem;
+  font-size: 0.8rem;
+}
+button.ce-icon-text-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+button.ce-icon-text-btn > *:first-child {
+  display: inline-block;
+  width: 1.4em;
+  height: 1.4em;
+  margin-right: 0.5em;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 1.4em 1.4em;
+}
+button.ce-icon-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 1.4em 1.4em;
+}
+/* button */
+a.ce-link-btn {
+  display: inline-block;
+  width: 100%;
+  height: 2.5rem;
+  /* to let box-sizing take effects */
+  line-height: 2.5rem;
+  text-align: center;
+  font-weight: bold;
+  border-radius: 6px;
+  border: 1px solid #29abe2;
+  color: #29abe2 !important;
+}
+a.ce-link-btn.ce-active {
+  background-color: #29abe2;
+  color: white !important;
+}
+/* input select textarea */
+input,
+select,
+textarea {
+  display: inline-block;
+  width: 100%;
+  height: 2.5rem;
+  padding: 0.5rem;
+  margin: 0px;
+  /* for alignment in iOS */
+  border-radius: 6px;
+  border: 1px solid #d2d6e1;
+}
+/* input */
+input:focus {
+  outline: none;
+}
+input[type="checkbox"] {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: unset !important;
+  /* fix width, so even setting flex:1 in other places cannot take effects */
+  appearance: none;
+  -webkit-appearance: none;
+  -ms-appearance: none;
+  -moz-appearance: none;
+}
+input[type="checkbox"]:checked:after {
+  content: "\2713";
+  font-weight: bold;
+  color: #29abe2;
+}
+/* textarea */
+textarea {
+  height: 18em;
+  resize: vertical;
+}
+textarea:focus {
+  outline: none;
+}
+/* select */
+select {
+  color: black;
+  /* for iOS */
+}
+/* adjust text-align */
+.ce-center {
+  text-align: center;
+}
+.ce-right {
+  text-align: right;
+}
+/* wrapper */
+.ce-wrapper {
+  box-sizing: border-box;
+  padding: 1rem;
+}
+.ce-wrapper.ce-bg1 {
+  background-color: #29abe2;
+}
+.ce-wrapper.ce-bg2 {
+  background-color: white;
+}
+.ce-wrapper.ce-wide {
+  padding: 2rem;
+}
+.ce-wrapper.ce-narrow {
+  padding: 0.5rem;
+}
+/* make children have a space vertically */
+.ce-space-v > * {
+  margin-bottom: 1rem;
+}
+.ce-space-v > *:last-child {
+  margin-bottom: 0;
+}
+/* make children have a space horizontally */
+.ce-space-h > * {
+  margin-right: 1rem;
+}
+.ce-space-h > *:last-child {
+  margin-right: 0;
+}
+/* make children have a bottom line */
+.ce-bottom-line > * > * {
+  border-bottom: 1px solid #ccc;
+}
+.ce-bottom-line > * > *:last-child {
+  border-bottom: 0;
+}
+/* make children have the same width horizontally */
+.ce-same-width-h {
+  display: flex;
+  justify-content: space-evenly;
+}
+/* divide width as proportions horizontally */
+.ce-division {
+  display: flex;
+}
+.ce-division.ce-center-v {
+  align-items: center;
+}
+.ce-division.ce-right-h {
+  justify-content: flex-end;
+}
+.ce-division.ce-center-h {
+  justify-content: center;
+}
+.ce-division > .ce-a-row {
+  margin-bottom: 0;
+}
+.ce-division > .ce-f-w1 {
+  flex: 1;
+  margin: 0;
+}
+.ce-division > .ce-f-w2 {
+  flex: 2;
+  margin: 0;
+}
+.ce-division > .ce-f-w3 {
+  flex: 3;
+  margin: 0;
+}
+.ce-division > .ce-f-w4 {
+  flex: 4;
+  margin: 0;
+}
+.ce-division > .ce-f-w5 {
+  flex: 5;
+  margin: 0;
+}
+@media (min-width: 960px) {
+  .ce-division {
+    flex-wrap: nowrap;
+  }
+  .ce-division > .ce-w100 {
+    flex-basis: 100px;
+  }
+  .ce-division > .ce-w300 {
+    flex-basis: 300px;
+  }
+  .ce-division > .ce-w1 {
+    flex: 1;
+  }
+  .ce-division > .ce-w2 {
+    flex: 2;
+  }
+  .ce-division > .ce-w3 {
+    flex: 3;
+  }
+  .ce-division > .ce-w4 {
+    flex: 4;
+  }
+  .ce-division > .ce-w5 {
+    flex: 5;
+  }
+  .ce-division > * {
+    margin-right: 1rem;
+  }
+  .ce-division > *:last-child {
+    margin-right: 0;
+  }
+}
+@media (max-width: 959px) {
+  .ce-division {
+    flex-wrap: wrap;
+  }
+  .ce-division > .ce-w100 {
+    width: 100%;
+  }
+  .ce-division > .ce-w300 {
+    width: 100%;
+  }
+  .ce-division > .ce-w1 {
+    width: 100%;
+  }
+  .ce-division > .ce-w2 {
+    width: 100%;
+  }
+  .ce-division > .ce-w3 {
+    width: 100%;
+  }
+  .ce-division > .ce-w4 {
+    width: 100%;
+  }
+  .ce-division > .ce-w5 {
+    width: 100%;
+  }
+  .ce-division > * {
+    margin-bottom: 1rem;
+  }
+  .ce-division > *:last-child {
+    margin-bottom: 0;
+  }
+}
+/* grid list */
+.ce-grid-list-c2 {
+  display: flex;
+  flex-wrap: wrap;
+}
+@media (min-width: 960px) {
+  .ce-grid-list-c2 > li {
+    width: calc((100% - 1 * 1rem) / 2);
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+  }
+  .ce-grid-list-c2 > li:nth-child(2n) {
+    margin-right: 0;
+  }
+}
+@media (max-width: 959px) {
+  .ce-grid-list-c2 > li {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}
+.ce-grid-list-c4 {
+  display: flex;
+  flex-wrap: wrap;
+}
+@media (min-width: 960px) {
+  .ce-grid-list-c4 > li {
+    width: calc((100% - 3 * 1rem) / 4);
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+  }
+  .ce-grid-list-c4 > li:nth-child(4n) {
+    margin-right: 0;
+  }
+}
+@media (max-width: 959px) {
+  .ce-grid-list-c4 > li {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}
+/* tags */
+.ce-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+.ce-tag-list > * {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  margin: 0.5rem;
+  border: 1px solid #d2d6e1;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: white;
+}
+.ce-tag-list > *.ce-active {
+  background-color: #29abe2;
+  border: 1px solid #29abe2;
+  color: white;
+}

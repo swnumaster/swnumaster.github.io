@@ -1,0 +1,330 @@
+/*
+ * Author: Jiangyingbing (373578963@qq.com)
+ * Date: 2021/11/16
+ */
+
+/* common */
+.centerAll {
+    margin: 0 auto;
+    max-width: 1355px;
+    width: 100%;
+}
+.bottomLine {
+    border-bottom: 1px solid #d2d6e1;
+}
+.originPrice {
+    text-decoration: line-through;
+    color: grey;
+}
+
+/* title */
+.title1 {
+    font-size: 2.8rem;
+    font-weight: bold;
+    color: #29abe2;
+}
+.title2 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #29abe2;
+}
+.title3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.title4 {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+.title5 {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+.small .title1 {
+    font-size: 2.8rem;
+}
+.small .title2 {
+    font-size: 1.4rem;
+}
+.small .title3 {
+    font-size: 1.2rem;
+}
+.small .title4 {
+    font-size: 1.2rem;
+}
+.small .title5 {
+    font-size: .9rem;
+}
+
+.tiny {
+    font-size: .9rem;
+    color: grey;
+}
+
+/* header */
+header {
+    color: white;
+}
+header > .top {
+    background-color: #29abe2;
+}
+header > .bottom {
+    background-color: white;
+    box-shadow: 2px 2px 8px #ccc;
+}
+header .top a {
+    color: white;
+    font-weight: bold;
+}
+header .logo a {
+    display: inline-block;
+    vertical-align: middle;
+	width: 120px;
+	height: 30px;
+	background: url("../../images/logo_white400x100.svg") no-repeat;
+}
+
+header nav {
+    display: flex; 
+    align-items: center;
+}
+header nav ul {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+header nav ul li {
+    padding-right: 2rem;
+}
+header nav a {
+    font-weight: bold;
+}
+
+/* tab nav */
+#tabNavWrapper {
+    display: none;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-top: 1px solid #d2d6e1;
+    background-color: white;
+    color: #29abe2;
+    font-weight: bold;
+    height: 5rem;
+}
+#tabNavWrapper li {
+    cursor: pointer;
+}
+
+#tabNavWrapper .tabIconHome {
+    height: 2rem;
+    width: 2rem;
+    margin: 0 auto;
+    background-image: url("../../images/icon_home32x32.svg");
+}
+
+#tabNavWrapper .tabIconFeatured {
+    height: 2rem;
+    width: 2rem;
+    margin: 0 auto;
+    background-image: url("../../images/icon_featured32x32.svg");
+}
+
+#tabNavWrapper .tabIconLatest {
+    height: 2rem;
+    width: 2rem;
+    margin: 0 auto;
+    background-image: url("../../images/icon_time32x32.svg");
+}
+
+#tabNavWrapper .tabIconAccount {
+    height: 2rem;
+    width: 2rem;
+    margin: 0 auto;
+    background-image: url("../../images/icon_user32x32.svg");
+}
+
+@media (max-width: 959px) {
+    header .logo {
+        text-align: center;
+    }
+    header nav {
+        display: none;
+    }
+    header .login {
+        display: none;
+    }
+    #tabNavWrapper {
+        display: flex;
+    }
+}
+
+/* main */
+main {
+    display: flex;
+    margin: 0 auto;  /* top and bottom are 0, left and right are auto */
+    width: 100%;
+}
+main nav a {
+    font-weight: bold;
+}
+
+/* item wrapper */
+.itemWrapper {
+    cursor: pointer;
+}
+.itemWrapper .title {
+    display: flex;
+}
+.itemWrapper .title>div {
+    flex-grow: 1;
+    width: 0;
+}
+.itemWrapper .title>div>div {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* image wrapper */
+.imageWrapper {
+    display: flex;
+    position: relative;
+    width: 100%;
+}
+.imageWrapper::before {
+    display: block;
+    content: "";
+    width: 100%;
+    padding-top: 75%;
+}
+.imageWrapper > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: grey;
+    object-fit: contain;
+}
+.imageWrapper .mask {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #29abe2;
+    opacity: .9;
+    text-align: center;
+    color: white;
+    align-items: center;
+}
+.imageWrapper .deleteBtn {
+    display: block;
+    position:absolute;
+    width: 2em;
+    height: 2em;
+    right: 0;
+    top: 0;
+    border-radius: 0;
+    padding: 0;
+    border: 0;
+    background-image: url("../../images/icon_del32x32.svg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 1.6em 1.6em;
+}
+
+/* image nav wrapper */
+.imageNavWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+.imageNavWrapper>div {
+    width: calc((100% - 2rem) / 5);
+    margin: .2rem;
+}
+.imageNavWrapper>div img {
+    cursor: pointer;
+}
+.imageNavWrapper #uploadBtn {
+    cursor: pointer;
+    background-image: url("../../images/icon_plus32x32.svg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 1.5rem 1.5rem;
+    background-color: #d2d6e1;
+}
+
+/* item info wrapper */
+.itemInfoWrapper .price {
+    text-align: center;
+}
+
+/* icon liked */
+.iconLiked {
+    background-image: url("../../images/icon_liked32x32.svg");
+}
+
+.iconUnliked {
+    background-image: url("../../images/icon_unliked32x32.svg");
+}
+
+/* icon featured */
+.iconFeatured {
+    background-image: url("../../images/icon_featured_white32x32.svg");
+}
+
+/* left nav */
+.leftNav li{
+    padding: .2rem;
+    border-bottom: 1px solid white;
+}
+
+.leftNav li:hover a {
+    color: #29abe2;
+}
+
+/* search wrapper */
+.searchWrapper {
+    position: relative;
+}
+.searchWrapper input {
+    padding-right: 2.5rem;
+}
+.searchWrapper button {
+    position: absolute;
+    right: 0;
+    background-image: url("../../images/icon_search32x32.svg");
+}
+
+/* avatar wrapper */
+.avatarWrapper {
+    width: 6rem;
+    height: 6rem;
+    border-radius: 3rem;
+    background-color:#29abe2;
+}
+
+/* skeleton wrapper */
+.skeletonWrapper > div {
+    height: 2rem;
+    background-color: #e1e1e1;
+}
+
+.skeletonWrapper .skeletonImage {
+    height: 13rem;
+}
+
+/* footer */
+footer {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+footer p {
+    padding: 0;
+}
