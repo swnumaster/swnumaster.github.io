@@ -98,7 +98,7 @@ input, select, textarea {
 		}
 
 	body, input, select, textarea {
-		color: #666;
+		color: #777;
 		font-family: "Source Sans Pro", Helvetica, sans-serif;
 		font-size: 16pt;
 		font-weight: 300;
@@ -121,7 +121,7 @@ input, select, textarea {
 		}
 
 	strong, b {
-		color: #555;
+		color: #777;
 		font-weight: 400;
 	}
 
@@ -134,7 +134,7 @@ input, select, textarea {
 	}
 
 	h1, h2, h3, h4, h5, h6 {
-		color: #555;
+		color: #777;
 		line-height: 1em;
 		margin: 0 0 1em 0;
 	}
@@ -2819,7 +2819,7 @@ input, select, textarea {
 	}
 
 		.main.style1 {
-			background: #fff;
+			background: #222;
 		}
 
 		.main.style2 {
