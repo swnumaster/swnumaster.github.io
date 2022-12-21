@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Scroll in a modal dialog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .wrapper {
+            background-color: #ccc;
+            height: 1500px;
+            box-sizing: border-box;
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal {
+            position: fixed;
+            top: 60px;
+            bottom: 60px;
+            left: 0;
+            right: 100px;
+            overflow-y: auto;
+            background-color: black;
+        }
+
+        .content {
+            position: absolute;
+            height: 1300px;
+            width: 50%;
+            background-color: red;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+    </style>
+
+    <script type="text/javascript">
+        function toggle() {
+            if (document.getElementById("modal").style.display == "none") {
+                document.getElementById("modal").style.display = "block";
+            } else {
+                document.getElementById("modal").style.display = "none";
+            }
+            
+        }
+    </script>
+  </head>
+  <body>
+
+    <div class="wrapper">
+        <button onclick="toggle()">Open modal</button>
+    </div>
+
+    <div class="modal" id="modal" style="display: none;">
+        <div class="content" onclick="toggle()">Content</div>
+    </div>
+
+  </body>
+</html>
