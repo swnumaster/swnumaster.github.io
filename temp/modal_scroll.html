@@ -27,7 +27,7 @@
             left: 0;
             right: 0;
             overflow-y: auto;
-            background-color: black;
+            background-color: rgba(0, 0, 0, 0.381);
         }
 
         .content {
@@ -46,8 +46,12 @@
         function toggle() {
             if (document.getElementById("modal").style.display == "none") {
                 document.getElementById("modal").style.display = "block";
+                document.body.style.overflow = "hidden";
+                //document.getElementById("wrapper").style.overflow = "hidden"; // doesn't work
             } else {
                 document.getElementById("modal").style.display = "none";
+                document.body.style.overflow = "auto";
+                //document.getElementById("wrapper").style.overflow = "auto";   // doesn't work
             }
             
         }
@@ -55,7 +59,7 @@
   </head>
   <body>
 
-    <div class="wrapper">
+    <div class="wrapper" id="wrapper">
         <button onclick="toggle()">Open modal</button>
     </div>
 
